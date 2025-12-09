@@ -23,8 +23,7 @@ const Register = () => {
       avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`
     };
 
-    // simulate auth login
-    login(newUser);
+    
 
     if (role === "tutor") {
       navigate("/dashboard/tutor");

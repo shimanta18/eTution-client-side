@@ -17,7 +17,7 @@ const NavBar = () => {
       <li><NavLink to="/">Home</NavLink></li>
       <li><NavLink to="/tuitions">Tuitions</NavLink></li>
       <li><NavLink to="/tutors">Tutors</NavLink></li>
-      <li><NavLink to="/about">About</NavLink></li>
+      <li><NavLink to="/About">About</NavLink></li>
       <li><NavLink to="/contact">Contact</NavLink></li>
 
       {user && <li><NavLink to="/dashboard">Dashboard</NavLink></li>}
@@ -39,7 +39,7 @@ const NavBar = () => {
 
           <ul
             tabIndex={0}
-            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52"
+            className="menu menu-sm dropdown-content mt-3 p-2 shadow bg-base-100 rounded-box w-52 "
           >
             {links}
           </ul>
@@ -57,13 +57,16 @@ const NavBar = () => {
       
       <div className="navbar-end">
         {user ? (
-          <button onClick={handleLogOut} className="btn">
-            Log Out
-          </button>
+          <div className="flex items-center gap-2">
+                        <div className="hidden sm:block font-medium text-sm">{user.displayName || user.email}</div>
+                        <a onClick={handleLogOut} className="btn btn-sm btn-ghost">Log Out</a>
+                    </div>
         ) : (
-          <Link className="btn" to="/login">
-            Log In
-          </Link>
+          <div className="flex items-center gap-2 ">
+                        <Link className="btn   text-xl" to="/login">Log In</Link> 
+                        <Link className="btn  btn-primary text-xl" to="/register">Register</Link>
+                         
+                    </div>
         )}
       </div>
     </div>
