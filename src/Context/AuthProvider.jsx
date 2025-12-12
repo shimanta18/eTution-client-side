@@ -1,10 +1,10 @@
 import {
-    GoogleAuthProvider, createUserWithEmailAndPassword,
-    onAuthStateChanged,
-    signInWithEmailAndPassword,
-    signInWithPopup,
-    signOut,
-    updateProfile
+  GoogleAuthProvider, createUserWithEmailAndPassword,
+  onAuthStateChanged,
+  signInWithEmailAndPassword,
+  signInWithPopup,
+  signOut,
+  updateProfile
 } from "firebase/auth";
 
 
@@ -80,7 +80,8 @@ const AuthProvider = ({ children }) => {
     signInUser,
     signInGoogle,
     logOut,
-    updateUserProfile
+    updateUserProfile,
+    
   }
 
   return (

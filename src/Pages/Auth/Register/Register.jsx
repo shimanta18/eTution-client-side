@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Link, useNavigate } from "react-router";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 
 
@@ -8,12 +8,16 @@ const Register = () => {
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [error,setError] = useState("")
 
-  const { login } = useAuth();
-  const navigate = useNavigate();
+  const{registerUser,updateUserProfile}=useAuth()
+  const navigate = useNavigate()
+  const location = useLocation
 
+  
   const handleRegister = (e) => {
     e.preventDefault();
+    setError("")
 
     const newUser = {
       id: crypto.randomUUID(),
