@@ -1,21 +1,33 @@
-import { doc, getDoc } from "firebase/firestore";
+
 import { useEffect, useState } from "react";
 import { Navigate } from "react-router-dom";
 
 import useAuth from "../hooks/useAuth";
 
-export default function RoleRoute({ children, role }) {
+export default function RoleRoute({ children, allowedRoles }) {
   const { user, loading } = useAuth();
   const [userRole, setUserRole] = useState(null);
   const [checkingRole, setCheckingRole] = useState(true);
 
-  useEffect(() => {
+   console.log("RoleRoute - User:", user);
+  console.log("RoleRoute - Allowed Roles:", allowedRoles);
+
+ useEffect(() => {
     const fetchUserRole = async () => {
       if (user) {
         try {
-          const userDoc = await getDoc(doc(db, "users", user.uid));
-          if (userDoc.exists()) {
-            setUserRole(userDoc.data().role);
+          
+
+
+
+          const response = await fetch(`http://localhost:5000/api/users/${user.uid}`);
+          
+          if (response.ok) {
+            const userData = await response.json();
+            console.log("RoleRoute - User Data from DB:", userData);
+            setUserRole(userData.role);
+          } else {
+            console.log("RoleRoute - User not found in database");
           }
         } catch (error) {
           console.error("Error fetching user role:", error);
@@ -23,6 +35,7 @@ export default function RoleRoute({ children, role }) {
       }
       setCheckingRole(false);
     };
+
 
     if (!loading) {
       fetchUserRole();
@@ -43,7 +56,7 @@ export default function RoleRoute({ children, role }) {
   }
 
   
-  if (userRole !== role) {
+  if (userRole && !allowedRoles.includes(userRole)) {
 
     if (userRole === "tutor") {
       return <Navigate to="/dashboard/tutor" replace />;

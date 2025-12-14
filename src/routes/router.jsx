@@ -28,7 +28,7 @@ export const router = createBrowserRouter([
                 path:'dashboard/tutor',
                 element:(
                     <PrivateRoute>
-                        <RoleRoute role="tutor"><TutorDashboard></TutorDashboard></RoleRoute>
+                        <RoleRoute allowedRoles={["tutor"]}><TutorDashboard></TutorDashboard></RoleRoute>
                     </PrivateRoute>
                 )
             },
@@ -38,7 +38,7 @@ export const router = createBrowserRouter([
                 path:'dashboard/student',
                 element:(
                     <PrivateRoute>
-                        <RoleRoute role="student"><StudentDashboard></StudentDashboard></RoleRoute>
+                        <RoleRoute allowedRoles={["student"]}><StudentDashboard></StudentDashboard></RoleRoute>
                     </PrivateRoute>
                 )
             }
