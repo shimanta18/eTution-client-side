@@ -4,8 +4,8 @@ import useAuth from "../hooks/useAuth";
 
 export default function PrivateRoute({ children,allowedRoles }) {
   const { user ,loading} = useAuth
-  console.log("RoleRoute-User:",user);
-  console.log("RoleRoute-Required Role:",role);
+  console.log("PrivateRoute - User:",user);
+  console.log("PrivateRoute - Loading:",loading);
   
 // loading while checking authentication
   if (loading) {
@@ -19,7 +19,7 @@ export default function PrivateRoute({ children,allowedRoles }) {
   
 
  if (!user) {
-    return <Navigate to="/auth/login" replace />;
+    return <Navigate to="/login" state={location.pathname} replace />;
   }
 
   return children;
