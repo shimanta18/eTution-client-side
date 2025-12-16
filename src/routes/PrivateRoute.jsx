@@ -3,7 +3,7 @@ import { Navigate } from "react-router-dom";
 import useAuth from "../hooks/useAuth";
 
 export default function PrivateRoute({ children,allowedRoles }) {
-  const { user ,loading} = useAuth
+  const { user ,loading} = useAuth()
   console.log("PrivateRoute - User:",user);
   console.log("PrivateRoute - Loading:",loading);
   

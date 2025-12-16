@@ -1,7 +1,8 @@
 import { useState } from "react";
-import { Link, useLocation, useNavigate } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 
+const API_BASE_URL = 'http://localhost:5000';
 
 const Register = () => {
   const [role, setRole] = useState("student");
@@ -12,29 +13,71 @@ const Register = () => {
 
   const{registerUser,updateUserProfile}=useAuth()
   const navigate = useNavigate()
-  const location = useLocation
-
   
-  const handleRegister = (e) => {
-    e.preventDefault();
-    setError("")
-
-    const newUser = {
-      id: crypto.randomUUID(),
-      name,
-      email,
-      role,
-      avatar: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`
-    };
-
+const handleRegister = (e) => {
+e.preventDefault();
+setError("")
     
+    
+    registerUser(email, password)
+        .then(result => {
+            const user = result.user;
 
-    if (role === "tutor") {
-      navigate("/dashboard/tutor");
-    } else {
-      navigate("/dashboard/student");
-    }
-  };
+            
+            updateUserProfile({
+                displayName: name,
+                photoURL: `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`
+            })
+            .then(async () => {
+               
+                const newUserDocument = {
+                    uid: user.uid,
+                    email: user.email,
+                    name: name,
+                    role: role, 
+                    photoURL: user.photoURL || `https://ui-avatars.com/api/?name=${encodeURIComponent(name)}`,
+                };
+                
+                
+                try {
+                    const saveResponse = await fetch(`${API_BASE_URL}/api/users/save`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify(newUserDocument),
+                    });
+
+                    if (!saveResponse.ok) {
+                        // Handle failure to save to DB (e.g., delete Firebase user, show error)
+                        throw new Error("Failed to save user role to database.");
+                    }
+                    
+                    console.log('User registered and saved to MongoDB:', user.uid); 
+                    
+                   
+                    if (role === "tutor") {
+                        navigate("/dashboard/tutor");
+                    } else {
+                        navigate("/dashboard/student");
+                    }
+                } catch (dbError) {
+                    console.error("Database save error:", dbError);
+                    setError(dbError.message);
+                }
+            })
+            .catch(profileError => {
+                
+                console.error("Error updating profile:", profileError);
+                setError("Registration failed during profile setup.");
+            });
+        })
+        .catch(authError => {
+      
+            console.error("Firebase registration error:", authError.message);
+            setError(authError.message.replace('Firebase: Error (', '').replace(').', ''));
+        });
+  };
 
   return (
     <div className="min-h-[80vh] flex items-center justify-center bg-gray-50 px-4">

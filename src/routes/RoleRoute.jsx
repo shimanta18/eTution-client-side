@@ -60,9 +60,13 @@ export default function RoleRoute({ children, allowedRoles }) {
 
     if (userRole === "tutor") {
       return <Navigate to="/dashboard/tutor" replace />;
-    } else if (userRole === "student") {
+    } 
+    
+    else if (userRole === "student") {
       return <Navigate to="/dashboard/student" replace />;
-    } else {
+    }
+    
+    else {
       return <Navigate to="/" replace />;
     }
   }
