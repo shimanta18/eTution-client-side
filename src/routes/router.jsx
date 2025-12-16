@@ -1,4 +1,4 @@
-import { createBrowserRouter } from 'react-router-dom'
+import { createBrowserRouter, Navigate } from 'react-router-dom'
 import AuthLayout from '../LayOut/AuthLayout'
 import RootLayOut from '../LayOut/RootLayOut'
 import Login from '../Pages/Auth/Login/Login'
@@ -8,9 +8,21 @@ import TutorDashboard from '../Pages/dashBoard/TutorDashboard'
 import Home from '../Pages/Main Home/Home/Home'
 
 
+import useAuth from '../hooks/useAuth'
 import PrivateRoute from './PrivateRoute'
 import RoleRoute from './RoleRoute'
 
+
+const DashboardRedirect = () => {
+    const { user, loading } = useAuth();
+
+    if (loading) return null; 
+
+    if (user?.role === 'tutor') {
+        return <Navigate to="/dashboard/tutor" replace />;
+    }
+    return <Navigate to="/dashboard/student" replace />;
+};
 
 export const router = createBrowserRouter([
     {
@@ -20,6 +32,11 @@ export const router = createBrowserRouter([
             {
                 path:'/',
                 Component:Home
+            },
+
+            {
+                path:'dashboard',
+                element:<PrivateRoute><DashboardRedirect></DashboardRedirect></PrivateRoute>
             },
 
             // Tutor dashboard
