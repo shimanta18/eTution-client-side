@@ -1,23 +1,523 @@
+import { useEffect, useState } from "react";
+import { useNavigate } from "react-router-dom";
+import useAuth from "../../hooks/useAuth";
+
+
+
 const TutorDashboard = () => {
+  const { user, logOut } = useAuth();
+
+  const navigate = useNavigate();
+
+  const [activeTab, setActiveTab] = useState('Available Tuitions');
+  const [availableTuitions, setAvailableTuitions] = useState([]);
+  const [myApplications, setMyApplications] = useState([]);
+  const [myStudents, setMyStudents] = useState([]);
+  const [loading, setLoading] = useState(false);
+
+  const tabs = ['Available Tuitions', 'My Applications', 'My Students', 'Earnings', 'Profile'];
+
+
+  useEffect(() => {
+    if (activeTab === 'Available Tuitions') {
+      fetchAvailableTuitions();
+    } 
+    
+    else if (activeTab === 'My Applications') {
+      fetchMyApplications();
+    } 
+    
+    else if (activeTab === 'My Students') {
+      fetchMyStudents();
+    }
+  }, 
+  [activeTab, user]);
+
+  const fetchAvailableTuitions = async () => {
+    setLoading(true);
+    try {
+      const response = await fetch('http://localhost:5000/api/tuitions/available');
+      if (response.ok) {
+        const data = await response.json();
+        setAvailableTuitions(data);
+      }
+    }
+    
+    catch (error) {
+      console.error('Error fetching tuitions:', error);
+    }
+    
+    finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMyApplications = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/applications/tutor/${user.uid}`);
+      if (response.ok) {
+        const data = await response.json();
+        setMyApplications(data);
+      }
+    }
+    
+    catch (error) {
+      console.error('Error fetching applications:', error);
+    }
+    
+    finally {
+      setLoading(false);
+    }
+  };
+
+  const fetchMyStudents = async () => {
+    if (!user) return;
+    setLoading(true);
+    try {
+      const response = await fetch(`http://localhost:5000/api/students/tutor/${user.uid}`);
+      if (response.ok) {
+        const data = await response.json();
+        setMyStudents(data);
+      }
+    } 
+    
+    catch (error) {
+      console.error('Error fetching students:', error);
+    } 
+    
+    finally {
+      setLoading(false);
+    }
+  };
+
+  const handleApplyToTuition = async (tuitionId) => {
+    if (!user) return;
+
+    try {
+      const applicationData = {
+        tuitionId,
+        tutorId: user.uid,
+        tutorName: user.displayName,
+        tutorEmail: user.email,
+        status: 'PENDING',
+        appliedAt: new Date().toISOString()
+      };
+
+      const response = await fetch('http://localhost:5000/api/applications', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(applicationData)
+      });
+
+      if (response.ok) {
+        alert('Application submitted successfully!');
+        fetchAvailableTuitions();
+      }
+      
+      else {
+        alert('Failed to submit application');
+      }
+    }
+    
+    
+    catch (error) {
+      console.error('Error applying to tuition:', error);
+      alert('Error submitting application');
+    }
+  };
+
+  const handleLogout = async () => {
+    try {
+      await logOut();
+      navigate('/login');
+    }
+    
+    
+    catch (error) {
+      console.error("Logout error:", error);
+    }
+  };
+
   return (
-    <div className="p-6">
-      <h1 className="text-3xl font-bold mb-4">Tutor Dashboard</h1>
-
-      <div className="space-y-4">
-        <div className="p-4 bg-white shadow rounded-lg">
-          <h2 className="text-xl font-semibold">My Applications</h2>
-          <p>Your tuition application statuses will appear here.</p>
+    <div className="flex min-h-screen bg-gray-50">
+      
+      <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200">
+        
+        <div className="flex items-center gap-2 px-6 py-5 border-b border-gray-200">
+          
+          <span className="text-lg font-semibold text-gray-900">eTuitionBd</span>
         </div>
 
-        <div className="p-4 bg-white shadow rounded-lg">
-          <h2 className="text-xl font-semibold">Ongoing Tuitions</h2>
-          <p>All approved tuitions assigned to you.</p>
+        {/* Profile Section */}
+        <div className="px-6 py-6 border-b border-gray-200">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+              <span className="text-green-600 font-semibold text-sm">
+                {user?.displayName?.charAt(0) || 'T'}
+              </span>
+            </div>
+            <div className="flex-1 min-w-0">
+              <p className="text-sm font-semibold text-gray-900 truncate">
+                {user?.displayName || 'Tutor'}
+              </p>
+              <p className="text-xs text-gray-500 uppercase tracking-wide">Tutor</p>
+            </div>
+          </div>
         </div>
 
-        <div className="p-4 bg-white shadow rounded-lg">
-          <h2 className="text-xl font-semibold">Revenue History</h2>
-          <p>Your earnings & completed payments will appear here.</p>
+        {/* Navigation */}
+        <nav className="flex-1 px-3 py-4">
+          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-green-600 bg-green-50 rounded-lg mb-1">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+            </svg>
+            Dashboard
+          </button>
+
+
+
+
+
+          
+          <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-gray-700 hover:bg-gray-50 rounded-lg">
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+            </svg>
+            Settings
+          </button>
+        </nav>
+
+       
+        <div className="p-3 border-t border-gray-200">
+          <button 
+            onClick={handleLogout}
+            className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg"
+          >
+            <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+            </svg>
+            Logout
+          </button>
         </div>
+      </div>
+
+      {/* Main Content */}
+      <div className="flex-1 lg:pl-64">
+        
+        <header className="bg-white border-b border-gray-200">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <div className="flex items-center justify-between h-16">
+              <h1 className="text-xl font-semibold text-gray-900">Tutor Dashboard</h1>
+              
+              <div className="flex items-center gap-3">
+                <span className="text-sm font-medium text-gray-700 hidden sm:block">
+                  {user?.displayName}
+                </span>
+                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
+                  <span className="text-white text-sm font-semibold">
+                    {user?.displayName?.charAt(0) || 'T'}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </header>
+
+        {/* Tabs */}
+        <div className="bg-white border-b border-gray-200">
+          <div className="px-4 sm:px-6 lg:px-8">
+            <nav className="flex space-x-8 overflow-x-auto">
+              {tabs.map((tab) => (
+                <button
+                  key={tab}
+                  onClick={() => setActiveTab(tab)}
+                  className={`py-4 px-1 border-b-2 font-medium text-sm whitespace-nowrap transition-colors ${
+                    activeTab === tab
+                      ? 'border-green-600 text-green-600'
+                      : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+                  }`}
+                >
+                  {tab}
+                </button>
+              ))}
+            </nav>
+          </div>
+        </div>
+
+        {/* Content */}
+        <main className="p-4 sm:p-6 lg:p-8">
+          <div className="max-w-7xl mx-auto">
+            <h2 className="text-2xl font-bold text-gray-900 mb-6">{activeTab}</h2>
+
+            {/* Available Tuitions Tab */}
+            {activeTab === 'Available Tuitions' && (
+              <div className="space-y-4">
+                {loading ? (
+                  <div className="flex justify-center py-12">
+                    <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : availableTuitions.length > 0 ? (
+                  availableTuitions.map((tuition) => (
+                    <div 
+                      key={tuition._id} 
+                      className="bg-white border border-gray-200 rounded-lg p-5 hover:shadow-md transition-shadow"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <div className="flex items-center gap-2 mb-2">
+                            <h3 className="text-base font-semibold text-gray-900">
+                              {tuition.subject} - {tuition.classGrade}
+                            </h3>
+                            <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              New
+                            </span>
+                          </div>
+                          <div className="space-y-1 mb-3">
+                            <p className="text-sm text-gray-600">
+                              <span className="font-medium">Student:</span> {tuition.studentName}
+                            </p>
+                            <p className="text-sm text-gray-600"> {tuition.location}</p>
+                            <p className="text-sm text-gray-600"> Budget: ৳{tuition.budget}/month</p>
+                          </div>
+                          <p className="text-sm text-gray-700">{tuition.description}</p>
+                        </div>
+                        
+                        <button
+                          onClick={() => handleApplyToTuition(tuition._id)}
+                          className="ml-4 px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition-colors"
+                        >
+                          Apply Now
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-16">
+                    <div className="text-6xl mb-4"></div>
+                    <p className="text-gray-500">No tuitions available at the moment.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* My Applications Tab */}
+            {activeTab === 'My Applications' && (
+              <div className="space-y-4">
+                {loading ? (
+                  <div className="flex justify-center py-12">
+                    <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : myApplications.length > 0 ? (
+                  myApplications.map((application) => (
+                    <div 
+                      key={application._id} 
+                      className="bg-white border border-gray-200 rounded-lg p-5"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-base font-semibold text-gray-900 mb-1">
+                            {application.tuitionDetails?.subject} - {application.tuitionDetails?.classGrade}
+                          </h3>
+                          <p className={`text-xs font-medium mb-2 ${
+                            application.status === 'ACCEPTED' ? 'text-green-600' :
+                            application.status === 'PENDING' ? 'text-orange-500' :
+                            'text-red-600'
+                          }`}>
+                            Status: {application.status}
+                          </p>
+                          <div className="space-y-1">
+                            <p className="text-sm text-gray-600">
+                              Applied: {new Date(application.appliedAt).toLocaleDateString()}
+                            </p>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-16">
+                    <div className="text-6xl mb-4"></div>
+                    <p className="text-gray-500">No applications yet. Start applying to available tuitions!</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* My Students Tab */}
+            {activeTab === 'My Students' && (
+              <div className="space-y-4">
+                {loading ? (
+                  <div className="flex justify-center py-12">
+                    <div className="w-8 h-8 border-4 border-green-600 border-t-transparent rounded-full animate-spin"></div>
+                  </div>
+                ) : myStudents.length > 0 ? (
+                  myStudents.map((student) => (
+                    <div 
+                      key={student._id} 
+                      className="bg-white border border-gray-200 rounded-lg p-5"
+                    >
+                      <div className="flex items-start justify-between">
+                        <div className="flex-1">
+                          <h3 className="text-base font-semibold text-gray-900 mb-1">
+                            {student.name}
+                          </h3>
+                          <div className="space-y-1">
+                            <p className="text-sm text-gray-600">
+                              <span className="font-medium">Subject:</span> {student.subject}
+                            </p>
+                            <p className="text-sm text-gray-600">
+                              <span className="font-medium">Class:</span> {student.classGrade}
+                            </p>
+                            <p className="text-sm text-green-600 font-medium">Status: ACTIVE</p>
+                          </div>
+                        </div>
+                        
+                        <button className="px-4 py-2 text-green-600 border border-green-600 text-sm font-medium rounded-lg hover:bg-green-50 transition-colors">
+                          View Details
+                        </button>
+                      </div>
+                    </div>
+                  ))
+                ) : (
+                  <div className="text-center py-16">
+                    <div className="text-6xl mb-4"></div>
+                    <p className="text-gray-500">No students yet. Your accepted applications will appear here.</p>
+                  </div>
+                )}
+              </div>
+            )}
+
+            {/* Earnings Tab */}
+            {activeTab === 'Earnings' && (
+              <div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                  <div className="bg-white border border-gray-200 rounded-lg p-5">
+                    <p className="text-sm text-gray-600 mb-1">This Month</p>
+                    <p className="text-3xl font-bold text-green-600">৳15,000</p>
+                    <p className="text-xs text-gray-500 mt-1">+12% from last month</p>
+                  </div>
+
+                  <div className="bg-white border border-gray-200 rounded-lg p-5">
+                    <p className="text-sm text-gray-600 mb-1">Last Month</p>
+                    <p className="text-3xl font-bold text-blue-600">৳13,400</p>
+                  </div>
+
+                  <div className="bg-white border border-gray-200 rounded-lg p-5">
+                    <p className="text-sm text-gray-600 mb-1">Total Earned</p>
+                    <p className="text-3xl font-bold text-purple-600">৳87,000</p>
+                  </div>
+                </div>
+
+                <div className="bg-white border border-gray-200 rounded-lg p-6">
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h3>
+
+
+                  <div className="space-y-3">
+                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                      <div>
+
+                        <p className="text-sm font-medium text-gray-900">Payment from John Doe</p>
+                        <p className="text-xs text-gray-500">Dec 15, 2025</p>
+                      </div>
+                      <span className="text-sm font-semibold text-green-600">+ ৳5,000</span>
+
+                    </div>
+                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">Payment from Sarah Ahmed</p>
+                        <p className="text-xs text-gray-500">Dec 10, 2025</p>
+                      </div>
+                      <span className="text-sm font-semibold text-green-600">+ 4,500</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Profile Tab */}
+            {activeTab === 'Profile' && (
+              <div className="bg-white border border-gray-200 rounded-lg p-6 max-w-2xl">
+                <div className="flex items-center gap-4 pb-6 border-b border-gray-200 mb-6">
+                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
+                    <span className="text-green-600 text-2xl font-semibold">
+                      {user?.displayName?.charAt(0) || 'T'}
+                    </span>
+                  </div>
+                  <button className="text-sm font-medium text-green-600 hover:text-green-700">
+                    Change Photo
+                  </button>
+                </div>
+
+                <div className="space-y-5">
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Full Name
+                    </label>
+                    <input
+                      type="text"
+                      defaultValue={user?.displayName || ''}
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Email Address
+                    </label>
+                    <input
+                      type="email"
+                      defaultValue={user?.email || ''}
+                      disabled
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-500"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Specialization
+                    </label>
+                    <input
+                      type="text"
+                      placeholder="e.g., Mathematics, Physics"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Experience (Years)
+                    </label>
+                    <input
+                      type="number"
+                      placeholder="e.g., 5"
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                    />
+                  </div>
+
+                  <div>
+                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
+                      Bio
+                    </label>
+                    <textarea
+                      rows="4"
+                      placeholder="Tell students about yourself..."
+                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
+                    ></textarea>
+                  </div>
+
+                  <button className="bg-green-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-green-700 transition-colors">
+                    Save Changes
+                  </button>
+                </div>
+              </div>
+            )}
+          </div>
+        </main>
       </div>
     </div>
   );
