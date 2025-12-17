@@ -9,6 +9,7 @@ import Home from '../Pages/Main Home/Home/Home'
 
 
 import useAuth from '../hooks/useAuth'
+import AdminDashBoard from '../Pages/dashBoard/AdminDashBoard'
 import PrivateRoute from './PrivateRoute'
 import RoleRoute from './RoleRoute'
 
@@ -37,6 +38,13 @@ export const router = createBrowserRouter([
             {
                 path:'dashboard',
                 element:<PrivateRoute><DashboardRedirect></DashboardRedirect></PrivateRoute>
+            },
+
+            {
+                path:'dashboard/admin',
+                element:(
+                    <PrivateRoute><RoleRoute allowedRoles={["admin"]}></RoleRoute><AdminDashBoard></AdminDashBoard></PrivateRoute>
+                )
             },
 
             // Tutor dashboard
