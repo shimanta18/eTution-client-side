@@ -26,10 +26,14 @@ export default function RoleRoute({ children, allowedRoles }) {
             const userData = await response.json();
             console.log("RoleRoute - User Data from DB:", userData);
             setUserRole(userData.role);
-          } else {
+          } 
+          
+          else {
             console.log("RoleRoute - User not found in database");
           }
-        } catch (error) {
+        } 
+        
+        catch (error) {
           console.error("Error fetching user role:", error);
         }
       }
