@@ -10,6 +10,7 @@ import Home from '../Pages/Main Home/Home/Home'
 
 import useAuth from '../hooks/useAuth'
 import AdminDashBoard from '../Pages/dashBoard/AdminDashBoard'
+import TuitionDetails from '../Pages/TuitionDetails/TuitionDetails'
 import PrivateRoute from './PrivateRoute'
 import RoleRoute from './RoleRoute'
 
@@ -40,6 +41,18 @@ export const router = createBrowserRouter([
             {
                 path:'/',
                 Component:Home
+            },
+
+            {
+                path:'tuitions',
+                element:<TuitionDetails></TuitionDetails>
+            },
+
+            {
+                path:'tuitions/:id',
+                element:(
+                    <RoleRoute allowedRoles={["tutor","admin","student"]}><TuitionDetails></TuitionDetails></RoleRoute>
+                )
             },
 
             {

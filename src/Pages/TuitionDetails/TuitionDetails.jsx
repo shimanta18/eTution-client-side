@@ -1,7 +1,8 @@
-import { useEffect } from 'react';
-import { useParams } from 'react-router-dom';
-import useAuth from '../hooks/useAuth';
-import ApplicationModal from './ApplicationModal';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
+import ApplicationModal from '../../Components/Modals/ApplicationModal';
+import useAuth from "../../hooks/useAuth";
+
 
 
 const TuitionDetails = () => {
