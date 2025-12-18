@@ -181,9 +181,7 @@ const [loading,setLoading] = useState(false)
       {/* Sidebar */}
       <div className="hidden lg:flex lg:flex-col lg:w-64 lg:fixed lg:inset-y-0 bg-white border-r border-gray-200">
         <div className="flex items-center gap-2 px-6 py-5 border-b border-gray-200">
-          <div className="w-9 h-9 bg-purple-600 rounded-md flex items-center justify-center">
-            <span className="text-white font-bold text-sm">eT</span>
-          </div>
+          
           <span className="text-lg font-semibold text-gray-900">eTuitionBd</span>
         </div>
 

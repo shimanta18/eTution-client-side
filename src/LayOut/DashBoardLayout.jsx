@@ -1,17 +1,25 @@
-import { Navigate } from 'react-router'
-import useAuth from '../hooks/useAuth'
+import { Navigate } from 'react-router';
+import useAuth from '../hooks/useAuth';
 
 const DashBoardLayout = () => {
-  const {user,setUser}= useAuth()
+  const { user, loading } = useAuth();
 
-  if(loading) return 
-  <div>Loading...</div>
+  if (loading) return null;
 
-  if(user?.role ==="tutor"){
-    return <Navigate to="/dashboard/tutor" replace></Navigate>
+  
+  if (user?.role === "admin") {
+    return <Navigate to="/dashboard/admin" replace />;
+  } 
+
+
+  else if (user?.role === 'tutor') { 
+    return <Navigate to="/dashboard/tutor" replace />;
+  } 
+
+  
+  else {
+    return <Navigate to="/dashboard/student" replace />;
   }
-
-  return <Navigate to="/dashboard/student"></Navigate>
 }
 
-export default DashBoardLayout
+export default DashBoardLayout;

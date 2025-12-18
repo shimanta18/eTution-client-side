@@ -59,17 +59,33 @@ const AuthProvider = ({ children }) => {
     return signOut(auth)
   }
 
-  //  Add auth state listener
-  useEffect(() => {
-    const unSubscribe = onAuthStateChanged(auth, (currentUser) => {
-      setUser(currentUser)
-      setLoading(false)
-    })
-    return () => {
-      unSubscribe()
-    }
-  }, [])
+ 
+ useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
+        if (currentUser) {
+            try {
+                
+                const res = await fetch(`http://localhost:5000/api/users/${currentUser.uid}`);
+                const data = await res.json();
+                
+                
+                setUser({ ...currentUser, role: data.role });
+            } 
+            
+            catch (error) {
+                console.error("Error fetching role:", error);
+                setUser(currentUser);
+            }
+        } 
+        
+        else {
+            setUser(null);
+        }
+        setLoading(false);
+    });
 
+    return () => unsubscribe(); 
+}, []);
 
   
 

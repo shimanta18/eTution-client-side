@@ -15,16 +15,23 @@ import RoleRoute from './RoleRoute'
 
 
 const DashboardRedirect = () => {
-    const { user, loading } = useAuth();
+  const { user, loading } = useAuth();
 
-    if (loading) return null; 
+  if (loading) {
+    return <div>Loading...</div>;
+  }
 
-    if (user?.role === 'tutor') {
-        return <Navigate to="/dashboard/tutor" replace />;
-    }
-    return <Navigate to="/dashboard/student" replace />;
+  if (user?.role === 'admin') {
+    return <Navigate to="/dashboard/admin" replace />;
+  }
+
+  if (user?.role === 'tutor') {
+    return <Navigate to="/dashboard/tutor" replace />;
+  }
+
+  
+  return <Navigate to="/dashboard/student" replace />;
 };
-
 export const router = createBrowserRouter([
     {
         path:'/',
@@ -43,7 +50,7 @@ export const router = createBrowserRouter([
             {
                 path:'dashboard/admin',
                 element:(
-                    <PrivateRoute><RoleRoute allowedRoles={["admin"]}></RoleRoute><AdminDashBoard></AdminDashBoard></PrivateRoute>
+                    <PrivateRoute><RoleRoute allowedRoles={["admin"]}><AdminDashBoard></AdminDashBoard></RoleRoute></PrivateRoute>
                 )
             },
 

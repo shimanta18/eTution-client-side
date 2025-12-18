@@ -173,7 +173,8 @@ const TutorDashboard = () => {
         <nav className="flex-1 px-3 py-4">
           <button className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-green-600 bg-green-50 rounded-lg mb-1">
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
+  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} 
+  d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z" />
             </svg>
             Dashboard
           </button>
@@ -195,7 +196,7 @@ const TutorDashboard = () => {
        
         <div className="p-3 border-t border-gray-200">
           <button 
-            onClick={handleLogout}
+        onClick={handleLogout}
             className="w-full flex items-center gap-3 px-3 py-2.5 text-sm font-medium text-red-600 hover:bg-red-50 rounded-lg"
           >
             <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -282,7 +283,7 @@ const TutorDashboard = () => {
                               <span className="font-medium">Student:</span> {tuition.studentName}
                             </p>
                             <p className="text-sm text-gray-600"> {tuition.location}</p>
-                            <p className="text-sm text-gray-600"> Budget: ৳{tuition.budget}/month</p>
+                            <p className="text-sm text-gray-600"> Budget: Bdt{tuition.budget}/month</p>
                           </div>
                           <p className="text-sm text-gray-700">{tuition.description}</p>
                         </div>
@@ -306,7 +307,9 @@ const TutorDashboard = () => {
             )}
 
             {/* My Applications Tab */}
-            {activeTab === 'My Applications' && (
+            {activeTab === 'My Applications' 
+            &&
+             (
               <div className="space-y-4">
                 {loading ? (
                   <div className="flex justify-center py-12">
@@ -342,14 +345,18 @@ const TutorDashboard = () => {
                 ) : (
                   <div className="text-center py-16">
                     <div className="text-6xl mb-4"></div>
-                    <p className="text-gray-500">No applications yet. Start applying to available tuitions!</p>
+                    <p className="text-gray-500">No applications yet. 
+                      Start applying to available tuitions!</p>
                   </div>
                 )}
               </div>
             )}
 
             {/* My Students Tab */}
-            {activeTab === 'My Students' && (
+            {activeTab === 'My Students' 
+            &&
+            
+            (
               <div className="space-y-4">
                 {loading ? (
                   <div className="flex justify-center py-12">
