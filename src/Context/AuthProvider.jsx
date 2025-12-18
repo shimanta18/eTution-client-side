@@ -73,7 +73,7 @@ const AuthProvider = ({ children }) => {
             } 
             
             catch (error) {
-                console.error("Error fetching role:", error);
+                
                 setUser(currentUser);
             }
         } 
