@@ -17,21 +17,122 @@ const TutorDashboard = () => {
 
   const tabs = ['Available Tuitions', 'My Applications', 'My Students', 'Earnings', 'Profile'];
 
+  const [profileData, setProfileData] = useState({
+  subject: '',
+  experience: '',
+  qualifications: '',
+  location: ''
+});
 
-  useEffect(() => {
-    if (activeTab === 'Available Tuitions') {
-      fetchAvailableTuitions();
-    } 
-    
-    else if (activeTab === 'My Applications') {
-      fetchMyApplications();
-    } 
-    
-    else if (activeTab === 'My Students') {
-      fetchMyStudents();
+const [earningsData, setEarningsData] = useState({
+  thisMonth: 0,
+  lastMonth: 0,
+  totalEarned: 0,
+  transactions: []
+});
+
+
+const fetchEarnings = async () => {
+  if (!user) return;
+  try {
+    const response = await fetch(`http://localhost:5000/api/earnings/tutor/${user.uid}`);
+    if (response.ok) {
+      const data = await response.json();
+      setEarningsData(data);
     }
-  }, 
-  [activeTab, user]);
+  }
+  
+  catch (error) {
+    console.error('Error fetching earnings:', error);
+  }
+};
+
+
+ useEffect(() => {
+  if (activeTab === 'Available Tuitions') {
+    fetchAvailableTuitions();
+  } 
+  
+  else if (activeTab === 'My Applications') {
+    fetchMyApplications();
+  } 
+
+  else if (activeTab === 'Earnings') {
+    fetchEarnings();
+  }
+  
+  else if (activeTab === 'My Students') {
+    fetchMyStudents();
+  } 
+  else if (activeTab === 'Profile' && user?.uid) {
+    
+    fetch(`http://localhost:5000/api/users/id/${user.uid}`)
+      .then(res => {
+        if (!res.ok) {
+          throw new Error('Failed to fetch profile');
+        }
+        return res.json();
+      })
+      .then(data => {
+        console.log(' Profile data loaded:', data); 
+        setProfileData({
+          subject: data.subject || '',
+          experience: data.experience || '',
+          qualifications: data.qualifications || '',
+          location: data.location || ''
+        });
+      })
+      .catch(error => {
+        console.error(' Error loading profile:', error);
+      });
+  }
+}, [activeTab, user]);
+
+
+
+
+const handleUpdateProfile = async (e) => {
+  e.preventDefault();
+  
+  console.log(' Updating profile with:', profileData); 
+  
+  try {
+    const response = await fetch(`http://localhost:5000/api/users/update/${user.uid}`, {
+      method: 'PUT',
+      headers: { 
+        'Content-Type': 'application/json' 
+      },
+      body: JSON.stringify(profileData)
+    });
+
+    const data = await response.json();
+    console.log(' Update response:', data); 
+
+    if (response.ok) {
+      alert(' Profile updated successfully!');
+     
+      const refreshResponse = await fetch(`http://localhost:5000/api/users/id/${user.uid}`);
+      if (refreshResponse.ok) {
+
+
+        const refreshedData = await refreshResponse.json();
+        setProfileData({
+
+
+          subject: refreshedData.subject || '',
+          experience: refreshedData.experience || '',
+          qualifications: refreshedData.qualifications || '',
+          location: refreshedData.location || ''
+        });
+      }
+    } else {
+      alert(' Failed to update profile: ' + data.message);
+    }
+  } catch (error) {
+    console.error(" Update error:", error);
+    alert('Error updating profile');
+  }
+};
 
   const fetchAvailableTuitions = async () => {
     setLoading(true);
@@ -216,14 +317,7 @@ const TutorDashboard = () => {
               <h1 className="text-xl font-semibold text-gray-900">Tutor Dashboard</h1>
               
               <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-gray-700 hidden sm:block">
-                  {user?.displayName}
-                </span>
-                <div className="w-8 h-8 bg-green-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-semibold">
-                    {user?.displayName?.charAt(0) || 'T'}
-                  </span>
-                </div>
+               
               </div>
             </div>
           </div>
@@ -398,131 +492,100 @@ const TutorDashboard = () => {
                 )}
               </div>
             )}
-
-            {/* Earnings Tab */}
-            {activeTab === 'Earnings' && (
-              <div>
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
-                  <div className="bg-white border border-gray-200 rounded-lg p-5">
-                    <p className="text-sm text-gray-600 mb-1">This Month</p>
-                    <p className="text-3xl font-bold text-green-600">৳15,000</p>
-                    <p className="text-xs text-gray-500 mt-1">+12% from last month</p>
-                  </div>
-
-                  <div className="bg-white border border-gray-200 rounded-lg p-5">
-                    <p className="text-sm text-gray-600 mb-1">Last Month</p>
-                    <p className="text-3xl font-bold text-blue-600">৳13,400</p>
-                  </div>
-
-                  <div className="bg-white border border-gray-200 rounded-lg p-5">
-                    <p className="text-sm text-gray-600 mb-1">Total Earned</p>
-                    <p className="text-3xl font-bold text-purple-600">৳87,000</p>
-                  </div>
+<main className="p-4 sm:p-6 lg:p-8">
+        <div className="max-w-7xl mx-auto">
+       
+          {activeTab === 'Earnings' && (
+            <div>
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                <div className="bg-white border border-gray-200 rounded-lg p-5">
+                  <p className="text-sm text-gray-600 mb-1">This Month</p>
+                  <p className="text-3xl font-bold text-green-600">Bdt{earningsData.thisMonth}</p>
                 </div>
-
-                <div className="bg-white border border-gray-200 rounded-lg p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h3>
-
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                      <div>
-
-                        <p className="text-sm font-medium text-gray-900">Payment from John Doe</p>
-                        <p className="text-xs text-gray-500">Dec 15, 2025</p>
-                      </div>
-                      <span className="text-sm font-semibold text-green-600">+ ৳5,000</span>
-
-                    </div>
-                    <div className="flex items-center justify-between py-3 border-b border-gray-100">
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">Payment from Sarah Ahmed</p>
-                        <p className="text-xs text-gray-500">Dec 10, 2025</p>
-                      </div>
-                      <span className="text-sm font-semibold text-green-600">+ 4,500</span>
-                    </div>
-                  </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-5">
+                  <p className="text-sm text-gray-600 mb-1">Last Month</p>
+                  <p className="text-3xl font-bold text-blue-600">Bdt{earningsData.lastMonth}</p>
+                </div>
+                <div className="bg-white border border-gray-200 rounded-lg p-5">
+                  <p className="text-sm text-gray-600 mb-1">Total Earned</p>
+                  <p className="text-3xl font-bold text-purple-600">Bdt{earningsData.totalEarned}</p>
                 </div>
               </div>
-            )}
 
-            {/* Profile Tab */}
-            {activeTab === 'Profile' && (
-              <div className="bg-white border border-gray-200 rounded-lg p-6 max-w-2xl">
-                <div className="flex items-center gap-4 pb-6 border-b border-gray-200 mb-6">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center">
-                    <span className="text-green-600 text-2xl font-semibold">
-                      {user?.displayName?.charAt(0) || 'T'}
-                    </span>
-                  </div>
-                  <button className="text-sm font-medium text-green-600 hover:text-green-700">
-                    Change Photo
-                  </button>
-                </div>
-
-                <div className="space-y-5">
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      defaultValue={user?.displayName || ''}
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Email Address
-                    </label>
-                    <input
-                      type="email"
-                      defaultValue={user?.email || ''}
-                      disabled
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm bg-gray-50 text-gray-500"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Specialization
-                    </label>
-                    <input
-                      type="text"
-                      placeholder="e.g., Mathematics, Physics"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Experience (Years)
-                    </label>
-                    <input
-                      type="number"
-                      placeholder="e.g., 5"
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                    />
-                  </div>
-
-                  <div>
-                    <label className="block text-sm font-medium text-gray-700 mb-1.5">
-                      Bio
-                    </label>
-                    <textarea
-                      rows="4"
-                      placeholder="Tell students about yourself..."
-                      className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent resize-none"
-                    ></textarea>
-                  </div>
-
-                  <button className="bg-green-600 text-white text-sm font-medium px-6 py-2.5 rounded-lg hover:bg-green-700 transition-colors">
-                    Save Changes
-                  </button>
+              <div className="bg-white border border-gray-200 rounded-lg p-6">
+                <h3 className="text-lg font-semibold text-gray-900 mb-4">Recent Transactions</h3>
+                <div className="space-y-3">
+                  {earningsData?.transactions?.length > 0 ? (
+  earningsData.transactions.map((tx, idx) => (
+    <div key={idx} className="flex items-center justify-between py-3 border-b border-gray-100">
+       
+    </div>
+  ))
+) : (
+  <p className="text-gray-500 text-sm">No recent transactions found.</p>
+)}
                 </div>
               </div>
-            )}
+            </div>
+          )}
+          
+          
+        </div>
+      </main>
+
+          {/* Profile Tab */}
+{activeTab === 'Profile' && (
+  <form onSubmit={handleUpdateProfile} className="bg-white border border-gray-200 rounded-lg p-6 max-w-2xl">
+    <div className="space-y-5">
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">Specialization (Subject)</label>
+        <input
+          type="text"
+          value={profileData.subject}
+          onChange={(e) => setProfileData({...profileData, subject: e.target.value})}
+          placeholder="e.g., Mathematics"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">Qualifications</label>
+        <input
+          type="text"
+          value={profileData.qualifications}
+          onChange={(e) => setProfileData({...profileData, qualifications: e.target.value})}
+          placeholder="e.g., B.Sc in Physics"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">Experience (Years)</label>
+        <input
+          type="number"
+          value={profileData.experience}
+          onChange={(e) => setProfileData({...profileData, experience: e.target.value})}
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+        />
+      </div>
+
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-1.5">Location</label>
+        <input
+          type="text"
+          value={profileData.location}
+          onChange={(e) => setProfileData({...profileData, location: e.target.value})}
+          placeholder="e.g., Dhaka, Bangladesh"
+          className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-green-500 outline-none"
+        />
+      </div>
+
+      <button type="submit" className="bg-green-600 text-white px-6 py-2.5 rounded-lg hover:bg-green-700 transition-colors">
+        Save Changes
+      </button>
+    </div>
+  </form>
+)}
           </div>
         </main>
       </div>

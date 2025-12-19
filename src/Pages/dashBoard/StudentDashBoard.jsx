@@ -253,16 +253,7 @@ const StudentDashBoard = () => {
             <div className="flex items-center justify-between h-16">
               <h1 className="text-xl font-semibold text-gray-900">Student Dashboard</h1>
               
-              <div className="flex items-center gap-3">
-                <span className="text-sm font-medium text-gray-700 hidden sm:block">
-                  {user?.displayName}
-                </span>
-                <div className="w-8 h-8 bg-indigo-600 rounded-full flex items-center justify-center">
-                  <span className="text-white text-sm font-semibold">
-                    {user?.displayName?.charAt(0) || 'S'}
-                  </span>
-                </div>
-              </div>
+              
             </div>
           </div>
         </header>

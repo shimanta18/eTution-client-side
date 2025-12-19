@@ -55,20 +55,31 @@ const NavBar = () => {
       </div>
 
       
-      <div className="navbar-end">
-        {user ? (
-          <div className="flex items-center gap-2">
-                        <div className="hidden sm:block font-medium text-sm">{user.displayName || user.email}</div>
-                        <a onClick={handleLogOut} className="btn btn-sm btn-ghost">Log Out</a>
-                    </div>
-        ) : (
-          <div className="flex items-center gap-2 ">
-                        <Link className="btn   text-xl" to="/login">Log In</Link> 
-                        <Link className="btn  btn-primary text-xl" to="/register">Register</Link>
-                         
-                    </div>
-        )}
-      </div>
+      <div className="navbar-end flex items-center gap-4">
+  {user ? (
+    <>
+      
+      <Link to="/dashboard" title="Go to Dashboard">
+        <div className="w-10 h-10 bg-green-600 rounded-full flex items-center justify-center hover:ring-2 ring-green-300 transition-all">
+          <span className="text-white font-bold ">
+            {user?.displayName?.charAt(0) || 'U'}
+          </span>
+         
+        </div>
+      </Link>
+
+      
+      <button 
+        onClick={handleLogOut}
+        className="px-4 py-2 bg-red-50 text-red-600 rounded-lg text-sm font-medium hover:bg-red-100 transition-colors"
+      >
+        Logout
+      </button>
+    </>
+  ) : (
+    <Link to="/login" className="btn btn-primary">Login</Link>
+  )}
+</div>
     </div>
   );
 };

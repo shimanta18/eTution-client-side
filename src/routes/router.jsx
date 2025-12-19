@@ -10,8 +10,11 @@ import Home from '../Pages/Main Home/Home/Home'
 
 import useAuth from '../hooks/useAuth'
 import AdminDashBoard from '../Pages/dashBoard/AdminDashBoard'
+import ErrorPage from '../Pages/ErrorPage/ErrorPage'
 import TuitionDetails from '../Pages/TuitionDetails/TuitionDetails'
 import Tuitions from '../Pages/Tutions/Tuitions'
+import TutorProfile from '../Pages/TutorProfile/TutorProfile'
+import Tutors from '../Pages/Tutors/Tutors'
 import PrivateRoute from './PrivateRoute'
 import RoleRoute from './RoleRoute'
 
@@ -38,6 +41,7 @@ export const router = createBrowserRouter([
     {
         path:'/',
         Component:RootLayOut,
+        errorElement:<ErrorPage></ErrorPage>,
         children:[
             {
                 path:'/',
@@ -54,6 +58,14 @@ export const router = createBrowserRouter([
                 element:<TuitionDetails></TuitionDetails>
             },
 
+            {
+                path:'tutors',
+                element:<Tutors></Tutors>
+            },
+            {
+                path:'tutors/:id',
+                element:<TutorProfile></TutorProfile>
+            },
             {
                 path:'dashboard',
                 element:<PrivateRoute><DashboardRedirect></DashboardRedirect></PrivateRoute>
