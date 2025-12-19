@@ -90,6 +90,9 @@ const StudentDashBoard = () => {
         postedAt: new Date().toISOString()
       };
 
+      console.log('Posting tuition:', tuitionData);
+      
+
       const response = await fetch('http://localhost:5000/api/tuitions', {
         method: 'POST',
         headers: {
@@ -118,6 +121,7 @@ const StudentDashBoard = () => {
       } 
       
       else {
+        const error = await response.json();
         alert('Failed to post tuition');
       }
     } 
