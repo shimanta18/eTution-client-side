@@ -11,6 +11,7 @@ import Home from '../Pages/Main Home/Home/Home'
 import useAuth from '../hooks/useAuth'
 import AdminDashBoard from '../Pages/dashBoard/AdminDashBoard'
 import TuitionDetails from '../Pages/TuitionDetails/TuitionDetails'
+import Tuitions from '../Pages/Tutions/Tuitions'
 import PrivateRoute from './PrivateRoute'
 import RoleRoute from './RoleRoute'
 
@@ -40,19 +41,17 @@ export const router = createBrowserRouter([
         children:[
             {
                 path:'/',
-                Component:Home
+                Component:Home 
             },
 
             {
                 path:'tuitions',
-                element:<TuitionDetails></TuitionDetails>
+                element:<Tuitions></Tuitions>
             },
 
             {
                 path:'tuitions/:id',
-                element:(
-                    <RoleRoute allowedRoles={["tutor","admin","student"]}><TuitionDetails></TuitionDetails></RoleRoute>
-                )
+                element:<TuitionDetails></TuitionDetails>
             },
 
             {
