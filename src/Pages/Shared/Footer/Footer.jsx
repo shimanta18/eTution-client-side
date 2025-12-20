@@ -1,5 +1,6 @@
 import { FaFacebookSquare } from "react-icons/fa";
 import { FaSquareInstagram, FaSquareXTwitter } from "react-icons/fa6";
+import { Link } from "react-router";
 const Footer = () => {
   return (
     <footer className="w-full bg-gray-900 text-white py-12 px-4 sm:px-6 lg:px-8 font-sans border-t border-gray-200">
@@ -19,10 +20,10 @@ const Footer = () => {
            <div>
             <h3 className="text-xl font-semibold mb-4 ">Quick Links</h3>
             <ul className="space-y-3">
-              <li><a href="#" className=" hover:text-indigo-600 transition-colors duration-200">Home</a></li>
-              <li><a href="#" className=" hover:text-indigo-600 transition-colors duration-200">Find Tuition</a></li>
-              <li><a href="#" className=" hover:text-indigo-600 transition-colors duration-200">Become a Tutor</a></li>
-              <li><a href="#" className=" hover:text-indigo-600 transition-colors duration-200">About us</a></li>
+              <li><a href="#" className=" hover:text-indigo-600 transition-colors duration-200"><Link to="/">Home</Link></a></li>
+              <li><a href="#" className=" hover:text-indigo-600 transition-colors duration-200"><Link to="/tuitions">Find Tuitiom</Link></a></li>
+              <li><a href="#" className=" hover:text-indigo-600 transition-colors duration-200"><Link to="/register">Become a Tutor</Link></a></li>
+              <li><a href="#" className=" hover:text-indigo-600 transition-colors duration-200"><Link to="/about">About</Link></a></li>
             </ul>
           </div>
 
@@ -30,8 +31,8 @@ const Footer = () => {
           <div>
             <h3 className="text-xl font-semibold mb-4 ">Contact</h3>
             <ul className="space-y-3">
-                <li><a href="mailto:info@communityconnect.com" className=" hover:text-indigo-600 transition-colors duration-200">info@communityconnect.com</a></li>
-              <li><a href="tel:+15551234567" className=" hover:text-indigo-600 transition-colors duration-200">+8801562367509</a></li>
+                <li><a href="mailto:info@communityconnect.com" className=" hover:text-indigo-600 transition-colors duration-200">hello@etuitionbd.com</a></li>
+              <li><a href="tel:+15551234567" className=" hover:text-indigo-600 transition-colors duration-200">+8801819890701</a></li>
             </ul>
             <div className="flex space-x-4 mt-6">
                             <a href="#" aria-label="Instagram" className=" hover:text-indigo-600 transition-colors duration-200">

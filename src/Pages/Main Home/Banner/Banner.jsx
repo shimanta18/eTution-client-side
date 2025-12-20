@@ -1,3 +1,4 @@
+import { Link } from "react-router"
 
 const Banner = () => {
   return (
@@ -9,8 +10,8 @@ const Banner = () => {
         Connecting ambitious students with expert educators. Transparent, secure, and fast.
       </h1>
       <div className=" flex justify-center sm:flex-row gap-4 ">
-        <button className="bg-white text-primary px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition shadow-lg ">Find Tuitions</button>
-      <button className="bg-transparent text-white border-2 border-white px-8 py-3 rounded-full font-bold  shadow-lg  hover:bg-white hover:text-primary transition">Become a Tutor</button>
+        <button className="bg-white text-primary px-8 py-3 rounded-full font-bold hover:bg-gray-100 transition shadow-lg "><Link to='/tuitions'>Find Tuitions</Link></button>
+      <button className="bg-transparent text-white border-2 border-white px-8 py-3 rounded-full font-bold  shadow-lg  hover:bg-white hover:text-primary transition"><Link to='/register'>Become a Tutor</Link></button>
       </div>
       
     </div>
