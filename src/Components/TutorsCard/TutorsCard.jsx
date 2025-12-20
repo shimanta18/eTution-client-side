@@ -9,7 +9,7 @@ const TutorsCard = ({ tutor }) => {
         {tutor.verificationStatus === "Verified" && 
         (
           <div className="absolute top-4 right-4 bg-white px-2 py-1 rounded-md flex items-center gap-1 shadow-sm border border-green-100">
-            <span className="text-green-600">✔</span>
+        
             <span className="text-[10px] font-bold text-green-700 uppercase">Verified</span>
           </div>
         )}

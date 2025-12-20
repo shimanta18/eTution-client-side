@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 
+const API_BASE = import.meta.env.VITE_API_URL;
+
 const AdminDashBoard = () => {
     const {user,logOut} =useAuth()
     const navigate = useNavigate()
@@ -24,8 +26,8 @@ const [loading,setLoading] = useState(false)
         fetchUsers()
     }
 
-    else if(activeTab  ==="Tution Management"){
-        fetchTutions()
+    else if(activeTab  ==="Tuition Management"){
+        fetchTuitions()
     }
 
      else if(activeTab  ==='Reports & Analytics'){
@@ -38,14 +40,17 @@ const [loading,setLoading] = useState(false)
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/admin/stats');
+      const response = await fetch(`${API_BASE}/stats`);
       if (response.ok) {
         const data = await response.json();
         setStats(data);
       }
-    } catch (error) {
+    }
+    catch (error) {
       console.error('Error fetching stats:', error);
-    } finally {
+    }
+    
+    finally {
       setLoading(false);
     }
   }
@@ -53,14 +58,16 @@ const [loading,setLoading] = useState(false)
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/admin/users');
+      const response = await fetch(`${API_BASE}/admin/users`);
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
       }
-    } catch (error) {
+    }
+     catch (error) {
       console.error('Error fetching users:', error);
-    } finally {
+    } 
+    finally {
       setLoading(false);
     }
   }
@@ -68,7 +75,7 @@ const [loading,setLoading] = useState(false)
   const fetchTuitions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/admin/tuitions');
+      const response = await fetch(`${API_BASE}/admin/tuitions`);
       if (response.ok) {
         const data = await response.json();
         setTuitions(data);
@@ -83,7 +90,7 @@ const [loading,setLoading] = useState(false)
     const fetchTransactions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/admin/transactions');
+      const response = await fetch(`${API_BASE}/admin/transactions`);
       if (response.ok) {
         const data = await response.json();
         setTransactions(data);
@@ -102,10 +109,12 @@ const [loading,setLoading] = useState(false)
     if (!confirm(`Change user role to ${newRole}?`)) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/users/${uid}/role`, {
+      const token = localStorage.getItem('access-token');
+      const response = await fetch(`${API_BASE}/admin/users/${uid}/role`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
+          'Authorization': `Bearer ${token}`
         },
         body: JSON.stringify({ role: newRole })
       });
@@ -126,7 +135,7 @@ const [loading,setLoading] = useState(false)
     if (!confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/users/${uid}`, {
+      const response = await fetch(`${API_BASE}/admin/users/${uid}`, {
         method: 'DELETE'
       });
 
@@ -146,7 +155,7 @@ const [loading,setLoading] = useState(false)
     if (!confirm(`${status === 'APPROVED' ? 'Approve' : 'Reject'} this tuition?`)) return;
 
     try {
-      const response = await fetch(`http://localhost:5000/api/admin/tuitions/${id}/status`, {
+      const response = await fetch(`${API_BASE}/admin/tuitions/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -170,7 +179,9 @@ const [loading,setLoading] = useState(false)
     try {
       await logOut();
       navigate('/login');
-    } catch (error) {
+    } 
+    
+    catch (error) {
       console.error("Logout error:", error);
     }
   };

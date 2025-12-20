@@ -1,4 +1,4 @@
-
+const API_BASE = import.meta.env.VITE_API_URL
 const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -29,11 +29,11 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
         }
     }
 
-    const response= await fetch('http://localhost:5000/api/applications',{
+    const response= await fetch(`${API_BASE}/applications`,{
         method:'POST',
 headers:{
     'Content-Type':'application/json',
-
+'Authorization': `Bearer ${localStorage.getItem('access-token')}`
 },
 
 body:JSON.stringify(applicationData)
@@ -47,7 +47,7 @@ body:JSON.stringify(applicationData)
 
     else{
         const error = await response.json();
-        alert(error.error || 'Failed to submit application')
+        alert(errorData.error || 'Failed to submit application')
         
     }
   }

@@ -8,6 +8,7 @@ const TutorDashboard = () => {
   const { user, logOut } = useAuth();
 
   const navigate = useNavigate();
+const API_BASE = import.meta.env.VITE_API_URL;
 
   const [activeTab, setActiveTab] = useState('Available Tuitions');
   const [availableTuitions, setAvailableTuitions] = useState([]);
@@ -35,7 +36,7 @@ const [earningsData, setEarningsData] = useState({
 const fetchEarnings = async () => {
   if (!user) return;
   try {
-    const response = await fetch(`http://localhost:5000/api/earnings/tutor/${user.uid}`);
+    const response = await fetch(`${apiUrl}/api/earnings/tutor/${user.uid}`);
     if (response.ok) {
       const data = await response.json();
       setEarningsData(data);
@@ -66,7 +67,7 @@ const fetchEarnings = async () => {
   } 
   else if (activeTab === 'Profile' && user?.uid) {
     
-    fetch(`http://localhost:5000/api/users/id/${user.uid}`)
+    fetch(`${apiUrl}/api/users/id/${user.uid}`)
       .then(res => {
         if (!res.ok) {
           throw new Error('Failed to fetch profile');
@@ -97,7 +98,7 @@ const handleUpdateProfile = async (e) => {
   console.log(' Updating profile with:', profileData); 
   
   try {
-    const response = await fetch(`http://localhost:5000/api/users/update/${user.uid}`, {
+    const response = await fetch(`${apiUrl}/api/users/update/${user.uid}`, {
       method: 'PUT',
       headers: { 
         'Content-Type': 'application/json' 
@@ -111,7 +112,7 @@ const handleUpdateProfile = async (e) => {
     if (response.ok) {
       alert(' Profile updated successfully!');
      
-      const refreshResponse = await fetch(`http://localhost:5000/api/users/id/${user.uid}`);
+      const refreshResponse = await fetch(`${apiUrl}/api/tuitions/available`);
       if (refreshResponse.ok) {
 
 
@@ -137,7 +138,7 @@ const handleUpdateProfile = async (e) => {
   const fetchAvailableTuitions = async () => {
     setLoading(true);
     try {
-      const response = await fetch('http://localhost:5000/api/tuitions/available');
+      const response = await fetch(`${apiUrl}/api/applications/tutor/${user.uid}`);
       if (response.ok) {
         const data = await response.json();
         setAvailableTuitions(data);
@@ -157,7 +158,7 @@ const handleUpdateProfile = async (e) => {
     if (!user) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/applications/tutor/${user.uid}`);
+      const response = await fetch(`${apiUrl}/api/applications`);
       if (response.ok) {
         const data = await response.json();
         setMyApplications(data);
@@ -177,7 +178,7 @@ const handleUpdateProfile = async (e) => {
     if (!user) return;
     setLoading(true);
     try {
-      const response = await fetch(`http://localhost:5000/api/students/tutor/${user.uid}`);
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/students/tutor/${user.uid}`);
       if (response.ok) {
         const data = await response.json();
         setMyStudents(data);
@@ -206,7 +207,7 @@ const handleUpdateProfile = async (e) => {
         appliedAt: new Date().toISOString()
       };
 
-      const response = await fetch('http://localhost:5000/api/applications', {
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/applications`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',

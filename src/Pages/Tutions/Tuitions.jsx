@@ -19,7 +19,7 @@ const Tuitions = () => {
     setLoading(true);
     try {
       console.log('Fetching tuitions')
-      const response = await fetch('http://localhost:5000/api/tuitions')
+      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tuitions`);
       console.log('Response status:', response.status)
 
 
