@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import useAuth from "../../../hooks/useAuth";
 
-const API_BASE_URL = 'http://localhost:5000';
+const apiUrl = import.meta.env.VITE_API_URL;
 
 const Register = () => {
   const [role, setRole] = useState("student");
@@ -42,7 +42,7 @@ setError("")
 
       console.log(' Sending to MongoDB:', newUserDocument);
 
-  const saveResponse = await fetch(`${API_BASE_URL}/api/users/save`,{
+  const saveResponse = await fetch(`${apiUrl}/users/save`,{
     method:"POST",
     headers:{
       'Content-Type':'application/json',

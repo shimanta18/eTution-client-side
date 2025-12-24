@@ -10,9 +10,11 @@ const Tutors = () => {
 
   useEffect(() => {
     const fetchTutors = async () => {
+
+      const apiUrl = import.meta.env.VITE_API_URL;
       try {
         
-        const response = await fetch('http://localhost:5000/api/users/role/tutor');
+        const response = await fetch(`${apiUrl}/users/role/tutor`);
         if (response.ok) {
 
 

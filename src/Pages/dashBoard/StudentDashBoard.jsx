@@ -9,7 +9,7 @@ const StudentDashBoard = () => {
   const [tuitions, setTuitions] = useState([]);
   const [loading, setLoading] = useState(false);
 
-const API_BASE = import.meta.env.VITE_API_URL;
+const apiUrl = import.meta.env.VITE_API_URL;
 
   const [formData, setFormData] = useState({
     subject: '',
@@ -36,7 +36,7 @@ const API_BASE = import.meta.env.VITE_API_URL;
     setLoading(true);
     try {
       
-      const response = await fetch(`${API_BASE}/tuitions/student/${user.uid}`)
+      const response = await fetch(`${apiUrl}/tuitions/student/${user.uid}`)
       
       if (response.ok) {
         const data = await response.json();
@@ -59,7 +59,7 @@ const API_BASE = import.meta.env.VITE_API_URL;
   
     setLoading(true);
     try {
-      const response = await fetch(`${API_BASE}/tuitions/student/${user.uid}`);
+      const response = await fetch(`${apiUrl}/tuitions/student/${user.uid}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -93,7 +93,7 @@ const API_BASE = import.meta.env.VITE_API_URL;
       console.log('Posting tuition:', tuitionData);
       
 
-      const response = await fetch(`${API_BASE}/tuitions`, {
+      const response = await fetch(`${apiUrl}/tuitions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ const API_BASE = import.meta.env.VITE_API_URL;
     if (!confirm('Are you sure you want to delete this tuition?')) return;
 
     try {
-      const response = await fetch(`${API_BASE}/tuitions/${tuitionId}`, {
+      const response = await fetch(`${apiUrl}/tuitions/${tuitionId}`, {
         method: 'DELETE'
       });
 

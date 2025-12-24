@@ -7,13 +7,15 @@ const TutorProfile = () => {
   const [tutor, setTutor] = useState(null);
   const [loading, setLoading] = useState(true);
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(() => {
     fetchTutorProfile();
   }, [id]);
 
   const fetchTutorProfile = async () => {
     try {
-      const response = await fetch(`http://localhost:5000/api/users/id/${id}`);
+      const response = await fetch(`${apiUrl}/users/id/${id}`);
       if (response.ok) {
         const data = await response.json();
         setTutor(data);

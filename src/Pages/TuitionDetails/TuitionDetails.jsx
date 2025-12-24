@@ -14,6 +14,8 @@ const TuitionDetails = () => {
   const [showModal, setShowModal] = useState(false);
   const [hasApplied, setHasApplied] = useState(false)
 
+  const apiUrl = import.meta.env.VITE_API_URL;
+
   useEffect(()=>{
     fetchTuitionDetails();
     if (user) {
@@ -24,7 +26,7 @@ const TuitionDetails = () => {
 
 const fetchTuitionDetails =async()=>{
     try{
-        const response = await fetch(`http://localhost:5000/api/tuitions/${id}`)
+        const response = await fetch(`${apiUrl}/tuitions/${id}`);
 
         if(response.ok){
             const data = await response.json()
@@ -42,7 +44,7 @@ const fetchTuitionDetails =async()=>{
 
 const checkIfApplied=async()=>{
     try{
-        const response= await fetch (`http://localhost:5000/api/applications/tutor/${user.uid}`);
+     const response = await fetch(`${apiUrl}/applications/tutor/${user.uid}`);
 
         if(response.ok){
             const applications = await response.json()

@@ -7,19 +7,17 @@ const Tuitions = () => {
   const [tuitions, setTuitions] = useState([]);
   const [loading, setLoading] = useState(true);
   const [filter, setFilter] = useState('all'); 
-  useEffect(() => {
-    
-    
-    fetchTuitions();
-  }, 
   
-  []);
+    const apiUrl = import.meta.env.VITE_API_URL;
+    
+   
+
 
   const fetchTuitions = async () => {
     setLoading(true);
     try {
-      console.log('Fetching tuitions')
-      const response = await fetch(`${import.meta.env.VITE_API_URL}/api/tuitions`);
+      console.log('Fetching tuitions from:', `${apiUrl}/api/tuitions/available`);
+      const response = await fetch(`${apiUrl}/api/tuitions/available`);
       console.log('Response status:', response.status)
 
 
@@ -40,6 +38,10 @@ console.error('Error fetching tuitions:', error);
    }
       
   }
+
+  useEffect(() => {
+    fetchTuitions();
+  }, []);
 
 
 const filteredTuitions = tuitions.filter((tuition) => {

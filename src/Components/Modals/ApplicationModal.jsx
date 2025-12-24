@@ -1,4 +1,4 @@
-const API_BASE = import.meta.env.VITE_API_URL
+const apiUrl = import.meta.env.VITE_API_URL
 const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
@@ -29,7 +29,7 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
         }
     }
 
-    const response= await fetch(`${API_BASE}/applications`,{
+    const response= await fetch(`${apiUrl}/applications`,{
         method:'POST',
 headers:{
     'Content-Type':'application/json',

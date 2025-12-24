@@ -13,6 +13,7 @@ export default function RoleRoute({ children, allowedRoles }) {
   console.log("RoleRoute - Allowed Roles:", allowedRoles);
 
  useEffect(() => {
+  const apiUrl = import.meta.env.VITE_API_URL;
     const fetchUserRole = async () => {
       if (user) {
         try {
@@ -20,7 +21,7 @@ export default function RoleRoute({ children, allowedRoles }) {
 
 
 
-          const response = await fetch(`http://localhost:5000/api/users/${user.uid}`);
+          const response = await fetch(`${apiUrl}/users/${user.uid}`);
           
           if (response.ok) {
             const userData = await response.json();

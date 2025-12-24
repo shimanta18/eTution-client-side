@@ -61,11 +61,15 @@ const AuthProvider = ({ children }) => {
 
  
  useEffect(() => {
+
+  const apiUrl = import.meta.env.VITE_API_URL;
+
+  
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
         if (currentUser) {
             try {
                 
-                const res = await fetch(`http://localhost:5000/api/users/${currentUser.uid}`);
+                const res = await fetch(`${apiUrl}/users/${currentUser.uid}`);
                 const data = await res.json();
                 
                 

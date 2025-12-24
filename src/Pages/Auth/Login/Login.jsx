@@ -15,7 +15,7 @@ const[password,setPassword] = useState("")
  const[error,setError] = useState("")
  
 
-const API_BASE_URL = 'http://localhost:5000'
+const apiUrl = import.meta.env.VITE_API_URL;
 
  const handleSubmit =async (e)=>{
 e.preventDefault()
@@ -28,7 +28,7 @@ try{
 
   console.log("Login successful. UID:", user.uid)
 
-  const roleResponse = await fetch(`${API_BASE_URL}/api/users/${user.uid}`)
+  const roleResponse = await fetch(`${apiUrl}/api/users/${user.uid}`)
 
   if(!roleResponse.ok){
     let errorText = await roleResponse.text();
