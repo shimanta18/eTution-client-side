@@ -15,14 +15,14 @@ const TutorProfile = () => {
 
   const fetchTutorProfile = async () => {
     try {
-      const response = await fetch(`${apiUrl}/users/id/${id}`);
+      const response = await fetch(`${apiUrl}/api/users/${id}`);
       if (response.ok) {
         const data = await response.json();
         setTutor(data);
       }
       
       else {
-        console.error('Failed to fetch tutor profile');
+        console.error('Failed to fetch tutor profile. Status:', response.status);
       }
     } 
     
