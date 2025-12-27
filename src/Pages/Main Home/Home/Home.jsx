@@ -1,6 +1,9 @@
 import Banner from "../Banner/Banner"
 import Social from "../Social/Social"
-import Stats from "../Social/stats"
+import Stats from "../Social/Stats"
+
+
+
 
 const Home = () => {
   return (
