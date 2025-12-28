@@ -15,7 +15,8 @@ const TutorProfile = () => {
 
   const fetchTutorProfile = async () => {
     try {
-      const response = await fetch(`${apiUrl}/api/users/${id}`);
+      const baseUri = apiUrl.endsWith('/api') ? apiUrl : `${apiUrl}/api`;
+      const response = await fetch(`${baseUri}/users/${id}`);
       if (response.ok) {
         const data = await response.json();
         setTutor(data);
