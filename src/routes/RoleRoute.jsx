@@ -14,6 +14,8 @@ export default function RoleRoute({ children, allowedRoles }) {
 
  useEffect(() => {
   const apiUrl = import.meta.env.VITE_API_URL;
+
+  
     const fetchUserRole = async () => {
       if (user) {
         try {
