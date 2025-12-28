@@ -16,9 +16,9 @@ const TutorProfile = () => {
   }, [id]);
 
   const fetchTutorProfile = async () => {
-    if (!id) return;
+   
     try {
-      setLoading(true);
+      
       const response = await fetch(`${apiUrl}/api/users/${id}`);
 
       if (response.ok) {
