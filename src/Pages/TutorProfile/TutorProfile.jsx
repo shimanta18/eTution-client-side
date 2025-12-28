@@ -19,9 +19,8 @@ const TutorProfile = () => {
     if (!id) return;
     try {
       setLoading(true);
-      const cleanBaseUrl = apiUrl.replace(/\/api$/, ""); 
-      const response = await fetch(`${cleanBaseUrl}/api/users/${id}`);
-      
+      const response = await fetch(`${apiUrl}/users/${id}`);
+
       if (response.ok) {
         const data = await response.json();
         setTutor(data);
