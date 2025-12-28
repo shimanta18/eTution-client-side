@@ -19,66 +19,58 @@ const TutorProfile = () => {
     if (!id) return;
     try {
       setLoading(true);
-      const response = await fetch(`${apiUrl}/users/${id}`);
+      const response = await fetch(`${apiUrl}/api/users/${id}`);
 
       if (response.ok) {
         const data = await response.json();
         setTutor(data);
       } else {
-        console.error('Server responded with 404. Path:', `${cleanBaseUrl}/api/users/${id}`);
+        console.error('Server responded with 404');
       }
-    } catch (error) {
+    } 
+    
+    catch (error) {
       console.error('Fetch error:', error);
-    } finally {
+    } 
+    
+    finally {
       setLoading(false);
     }
   };
 
   const handleApply = async () => {
+   
     if (!currentUser) {
       alert("Please login to apply.");
       return;
     }
 
     try {
-      const cleanBaseUrl = apiUrl.replace(/\/api$/, ""); 
-      const response = await fetch(`${cleanBaseUrl}/api/applications/tutor/${id}`, {
+     
+      const response = await fetch(`${apiUrl}/api/applications/tutor/${id}`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ 
           tutorId: id, 
           studentId: currentUser.uid,
-          studentName: currentUser.displayName || "Student" 
+          studentName: currentUser.displayName || "Student",
+          
         })
       });
+      
+      const data = await response.json();
+
       
       if (response.ok) {
         alert("Application sent successfully!");
       } else {
-        const errorData = await response.json();
-        alert(`Error: ${errorData.message || "Failed to apply"}`);
+        alert(`Error: ${data.error || "Failed to apply"}`);
       }
     } catch (error) {
       console.error("Apply error:", error);
+      alert("Network error. Please try again.");
     }
   };
-
-  if (loading) {
-    return (
-      <div className="flex justify-center items-center min-h-screen">
-        <div className="w-12 h-12 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
-      </div>
-    );
-  }
-
-  if (!tutor) {
-    return (
-      <div className="max-w-4xl mx-auto p-8 text-center">
-        <p className="text-gray-500 font-semibold">Tutor Profile Not Found</p>
-        <p className="text-sm text-gray-400 mt-2">Checking path: {apiUrl}/api/users/{id}</p>
-      </div>
-    );
-  }
 
   return (
     <div className="min-h-screen bg-gray-50 py-8">
