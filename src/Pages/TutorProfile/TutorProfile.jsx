@@ -14,21 +14,22 @@ const TutorProfile = () => {
   }, [id]);
 
   const fetchTutorProfile = async () => {
+    console.log("Fetching profile for ID:", id); 
+    if (!id) return;
+
     try {
-      const baseUri = apiUrl.endsWith('/api') ? apiUrl : `${apiUrl}/api`;
-      const response = await fetch(`${baseUri}/users/${id}`);
+      setLoading(true);
+      const cleanBaseUrl = apiUrl.replace(/\/api$/, ""); 
+      const response = await fetch(`${cleanBaseUrl}/api/users/${id}`);
+      
       if (response.ok) {
         const data = await response.json();
         setTutor(data);
+      } else {
+        console.error('Server responded with 404. Check if user exists in DB.');
       }
-      
-      else {
-        console.error('Failed to fetch tutor profile. Status:', response.status);
-      }
-    } 
-    
-    catch (error) {
-      console.error('Error fetching tutor:', error);
+    } catch (error) {
+      console.error('Fetch error:', error);
     } finally {
       setLoading(false);
     }
