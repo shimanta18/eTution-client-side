@@ -26,7 +26,7 @@ const TuitionDetails = () => {
 
 const fetchTuitionDetails =async()=>{
     try{
-        const response = await fetch(`${apiUrl}/tuitions/${id}`);
+        const response = await fetch(`${apiUrl}/api/tuitions/${id}`);
 
         if(response.ok){
             const data = await response.json()
@@ -44,7 +44,7 @@ const fetchTuitionDetails =async()=>{
 
 const checkIfApplied=async()=>{
     try{
-     const response = await fetch(`${apiUrl}/applications/tutor/${user.uid}`);
+   const response = await fetch(`${apiUrl}/api/applications/tutor/${user.uid}`);
 
         if(response.ok){
             const applications = await response.json()
