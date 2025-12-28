@@ -16,18 +16,14 @@ const Tuitions = () => {
   const fetchTuitions = async () => {
     setLoading(true);
     try {
-      console.log('Fetching tuitions from:', `${apiUrl}/api/tuitions/available`);
+      
       const response = await fetch(`${apiUrl}/api/tuitions/available`);
-      console.log('Response status:', response.status)
-
-
-      if(response.ok){
+if(response.ok){
 const data = await response.json()
-console.log('Fetched tuitions:', data);
 
 setTuitions(data)
       }
-   }   
+   }  
 
    catch(error){
 console.error('Error fetching tuitions:', error);
