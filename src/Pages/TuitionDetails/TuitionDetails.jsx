@@ -1,11 +1,13 @@
 import { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import ApplicationModal from "../../Components/Modals/ApplicationModal";
 import useAuth from "../../hooks/useAuth";
 
 console.log("useAuth imported:", useAuth);
 
 const TuitionDetails = () => {
-   console.log("Component rendering");
+  const { id } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
 
   const [tuition, setTuition] = useState(null);
