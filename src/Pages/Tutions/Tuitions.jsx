@@ -32,7 +32,7 @@ const Tuitions = () => {
 
   return (
     <div className="min-h-screen bg-gray-50">
-      <Header />
+      
       <Filters filter={filter} setFilter={setFilter} />
 
       <div className="max-w-7xl mx-auto px-4 pb-12">
