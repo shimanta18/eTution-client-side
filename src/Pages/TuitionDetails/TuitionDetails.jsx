@@ -13,7 +13,7 @@ const TuitionDetails = () => {
   const [applied, setApplied] = useState(false);
   const [open, setOpen] = useState(false);
 
-  // ✅ FIX: Define apiUrl
+  
   const apiUrl = import.meta.env.VITE_API_URL;
 
   useEffect(() => {
@@ -22,13 +22,13 @@ const TuitionDetails = () => {
 
   const load = async () => {
     try {
-      // ✅ FIX: Use fetch with apiUrl
+     
       const response1 = await fetch(`${apiUrl}/api/tuitions/${id}`);
       const data = await response1.json();
       setTuition(data);
 
       if (user) {
-        // ✅ FIX: Use fetch instead of apiFetch
+    
         const response2 = await fetch(`${apiUrl}/api/applications/tutor/${user.uid}`);
         const apps = await response2.json();
         setApplied(apps.some(a => a.tuitionId === id));
@@ -40,7 +40,7 @@ const TuitionDetails = () => {
     }
   };
 
-  // ✅ FIX: Inline loading state
+ 
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -49,7 +49,7 @@ const TuitionDetails = () => {
     );
   }
 
-  // ✅ FIX: Inline empty state
+ 
   if (!tuition) {
     return (
       <div className="min-h-screen flex items-center justify-center">
