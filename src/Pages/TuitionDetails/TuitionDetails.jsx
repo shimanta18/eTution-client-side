@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { apiFetch } from "../../api/api";
+
 import ApplicationModal from "../../Components/Modals/ApplicationModal";
 import useAuth from "../../hooks/useAuth";
 
@@ -20,7 +20,8 @@ const TuitionDetails = () => {
 
   const load = async () => {
     try {
-      const data = await apiFetch(`/api/tuitions/${id}`);
+      const response1 = await fetch(`${apiUrl}/api/tuitions/${id}`);
+      const data = await response1.json();
       setTuition(data);
 
       if (user) {

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import TuitionCard from "../../Components/TuitionCard";
-import { apiFetch } from "../../api/api";
+
 
 const Tuitions = () => {
   const [tuitions, setTuitions] = useState([]);
@@ -14,11 +14,14 @@ const Tuitions = () => {
   const loadTuitions = async () => {
     try {
       setLoading(true);
-      const data = await apiFetch("/api/tuitions/available");
+      const response = await fetch(`${apiUrl}/api/tuitions/available`);
+      const data = await response.json();
       setTuitions(data);
-    } catch (err) {
+    }
+     catch (err) {
       console.error(err.message);
-    } finally {
+    } 
+    finally {
       setLoading(false);
     }
   };
