@@ -1,5 +1,9 @@
-const apiUrl = import.meta.env.VITE_API_URL
+
+import { useState } from 'react';
+import useAuth from '../../hooks/useAuth';
+
 const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
+  const apiUrl = import.meta.env.VITE_API_URL;
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
   const [formData, setFormData] = useState({
@@ -7,12 +11,13 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
     experience: '',
     expectedSalary: ''
   });
-  const handleSubmit= async(e)=>{
- e.preventDefault();
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
     setLoading(true);
 
-    try{
-        const applicationData = {
+    try {
+      const applicationData = {
         tuitionId: tuition._id,
         tutorId: user.uid,
         tutorName: user.displayName,
@@ -27,61 +32,50 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
           classGrade: tuition.classGrade,
           studentName: tuition.studentName
         }
-    }
+      };
 
-    const response= await fetch(`${apiUrl}/applications`,{
-        method:'POST',
-headers:{
-    'Content-Type':'application/json',
-'Authorization': `Bearer ${localStorage.getItem('access-token')}`
-},
+      // ✅ FIX: Add /api prefix to match backend
+      const response = await fetch(`${apiUrl}/api/applications`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify(applicationData)
+      });
 
-body:JSON.stringify(applicationData)
-    })
-
-    if(response.ok){
-        alert('Application submitted successfully!')
-        onSuccess()
-        onClose()
-    }
-
-    else{
-        const error = await response.json();
-        alert(errorData.error || 'Failed to submit application')
-        
-    }
-  }
-
-  catch(error){
-     console.error('Error submitting application:', error);
+      if (response.ok) {
+        alert('Application submitted successfully!');
+        onSuccess();
+        onClose();
+      } else {
+        // ✅ FIX: Variable name was 'error' but used 'errorData'
+        const errorData = await response.json();
+        alert(errorData.error || 'Failed to submit application');
+      }
+    } catch (error) {
+      console.error('Error submitting application:', error);
       alert('Error submitting application');
-  }
+    } finally {
+      setLoading(false);
+    }
+  };
 
-  finally{
-    setLoading(false);
-  }
-}
-
-const handleChange=(e)=>{
+  const handleChange = (e) => {
     setFormData({
-        ...formData,
-        [e.target.name]:e.target.value
-    })
-}
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
 
-return (
+  return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       <div className="bg-white rounded-lg max-w-md w-full p-6">
         <div className="flex items-center justify-between mb-6">
           <h2 className="text-xl font-bold text-gray-900">Apply for Tuition</h2>
           <button
-
-
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600"
           >
-
-
             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
             </svg>
@@ -90,18 +84,20 @@ return (
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-<label className="block text-sm font-medium text-gray-700 mb-1">Name (read-only)
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Name (read-only)
             </label>
-    <input
-    type="text"
-        value={user?.displayName || ''}
+            <input
+              type="text"
+              value={user?.displayName || ''}
               disabled
               className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-500"
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Email (read-only)
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Email (read-only)
             </label>
             <input
               type="email"
@@ -112,44 +108,47 @@ return (
           </div>
 
           <div>
- <label className="block text-sm font-medium text-gray-700 mb-1">Qualifications *
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Qualifications *
             </label>
-    <textarea
-       name="qualifications"
-   required
-              rows="3"
+            <textarea
+              name="qualifications"
+              required
+              rows={3}
               value={formData.qualifications}
               onChange={handleChange}
               placeholder="e.g., M.Sc. in Mathematics, B.Ed."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-            ></textarea>
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Experience *
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Experience *
             </label>
-    <textarea
-    name="experience"
+            <textarea
+              name="experience"
               required
-              rows="3"
+              rows={3}
               value={formData.experience}
-        onChange={handleChange}
+              onChange={handleChange}
               placeholder="Describe your teaching experience..."
-              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500 resize-none"
-            ></textarea>
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 resize-none"
+            />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1"> Expected Salary (Bdt/month) *
+            <label className="block text-sm font-medium text-gray-700 mb-1">
+              Expected Salary (BDT/month) *
             </label>
- <input
-  type="number"
-    name="expectedSalary"
-     required
-      value={formData.expectedSalary}
-        onChange={handleChange}
-        placeholder="e.g., 5000"
-     className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-green-500"
+            <input
+              type="number"
+              name="expectedSalary"
+              required
+              value={formData.expectedSalary}
+              onChange={handleChange}
+              placeholder="e.g., 5000"
+              className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500"
             />
           </div>
 
@@ -162,9 +161,9 @@ return (
               Cancel
             </button>
             <button
-    type="submit"
-    disabled={loading}
-    className="flex-1 px-4 py-2 bg-green-600 text-white rounded-lg hover:bg-green-700 transition disabled:opacity-50"
+              type="submit"
+              disabled={loading}
+              className="flex-1 px-4 py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition disabled:opacity-50"
             >
               {loading ? 'Submitting...' : 'Submit Application'}
             </button>
@@ -174,4 +173,5 @@ return (
     </div>
   );
 };
-export default ApplicationModal
+
+export default ApplicationModal;
