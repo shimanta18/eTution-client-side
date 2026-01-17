@@ -4,6 +4,7 @@ import ApplicationModal from "../../Components/Modals/ApplicationModal";
 import useAuth from "../../hooks/useAuth";
 
 console.log("useAuth imported:", useAuth);
+
 const TuitionDetails = () => {
   const { id } = useParams();
   const navigate = useNavigate();
