@@ -19,9 +19,12 @@ const Tuitions = () => {
       const response = await fetch(`${apiUrl}/api/tuitions/available`);
       const data = await response.json();
       setTuitions(data);
-    } catch (err) {
+    } 
+    catch (err) {
       console.error(err.message);
-    } finally {
+    } 
+    
+    finally {
       setLoading(false);
     }
   };
