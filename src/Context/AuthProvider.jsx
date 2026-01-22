@@ -1,11 +1,5 @@
 import {
-  GoogleAuthProvider,
-  createUserWithEmailAndPassword,
-  onAuthStateChanged,
-  signInWithEmailAndPassword,
-  signInWithPopup,
-  signOut,
-  updateProfile
+  GoogleAuthProvider, createUserWithEmailAndPassword, onAuthStateChanged, signInWithEmailAndPassword, signInWithPopup, signOut, updateProfile
 } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { auth } from "../fireBase/fireBase";
@@ -16,10 +10,57 @@ const googleProvider = new GoogleAuthProvider();
 const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const apiUrl = import.meta.env.VITE_API_URL;
 
-  const registerUser = (email, password) => {
+  
+  const saveUserToDatabase = async (userData) => {
+    try {
+      const response = await fetch(`${apiUrl}/api/users/save`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          uid: userData.uid,
+          email: userData.email,
+          name: userData.displayName || userData.email.split('@')[0],
+          photoURL: userData.photoURL,
+          role: userData.role || 'student'
+        })
+      });
+
+      if (!response.ok) {
+        console.error('Failed to save user to database');
+      }
+    } catch (error) {
+      console.error('Error saving user:', error);
+    }
+  };
+
+  const registerUser = async (email, password, additionalData = {}) => {
     setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
+    try {
+      const result = await createUserWithEmailAndPassword(auth, email, password);
+      
+     
+      if (additionalData.name) {
+        await updateProfile(result.user, { displayName: additionalData.name });
+      }
+      
+    
+      await saveUserToDatabase({
+        uid: result.user.uid,
+        email: result.user.email,
+        displayName: additionalData.name || email.split('@')[0],
+        photoURL: result.user.photoURL,
+        role: additionalData.role || 'student'
+      });
+      
+      return result;
+    } catch (error) {
+      console.error("Registration error:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const signInUser = (email, password) => {
@@ -31,9 +72,27 @@ const AuthProvider = ({ children }) => {
     return updateProfile(auth.currentUser, profile);
   };
 
-  const signInGoogle = () => {
+  const signInGoogle = async () => {
     setLoading(true);
-    return signInWithPopup(auth, googleProvider);
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      
+    
+      await saveUserToDatabase({
+        uid: result.user.uid,
+        email: result.user.email,
+        displayName: result.user.displayName,
+        photoURL: result.user.photoURL,
+        role: 'student' 
+      });
+      
+      return result;
+    } catch (error) {
+      console.error("Google sign-in error:", error);
+      throw error;
+    } finally {
+      setLoading(false);
+    }
   };
 
   const logOut = () => {
@@ -42,26 +101,23 @@ const AuthProvider = ({ children }) => {
   };
 
   useEffect(() => {
-    const apiUrl = import.meta.env.VITE_API_URL;
-
     const unsubscribe = onAuthStateChanged(auth, async (currentUser) => {
       if (currentUser) {
         try {
-          // ✅ FIX 1: Add parentheses around template literal
-          // ✅ FIX 2: Add /api prefix to match your backend routes
+          
           const res = await fetch(`${apiUrl}/api/users/${currentUser.uid}`);
           
           if (res.ok) {
             const data = await res.json();
-            // Set user with role from database
             setUser({ ...currentUser, role: data.role });
-          } else {
-            // If user not found in DB, set without role
-            setUser(currentUser);
+          }
+           else {
+            
+            await saveUserToDatabase(currentUser);
+            setUser({ ...currentUser, role: 'student' });
           }
         } catch (error) {
           console.error("Error fetching user role:", error);
-          // Fallback: set user without role
           setUser(currentUser);
         }
       } else {
@@ -71,7 +127,7 @@ const AuthProvider = ({ children }) => {
     });
 
     return () => unsubscribe();
-  }, []);
+  }, [apiUrl]);
 
   const authInfo = {
     user,

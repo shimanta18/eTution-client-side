@@ -17,9 +17,7 @@ const [loading, setLoading] = useState(false);
   
 const handleRegister = async (e) => {
 e.preventDefault();
-setError("")
-    setLoading(true)
-
+const formData = new FormData(e.target)
     try{
       const result=    await registerUser(email,password)
       const user = result.user
@@ -42,7 +40,7 @@ setError("")
 
       console.log(' Sending to MongoDB:', newUserDocument);
 
-  const saveResponse = await fetch(`${apiUrl}/users/save`,{
+  const saveResponse = await fetch(`${apiUrl}/api/users/save`,{
     method:"POST",
     headers:{
       'Content-Type':'application/json',

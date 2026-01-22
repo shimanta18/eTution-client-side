@@ -1,15 +1,21 @@
 import { useState } from 'react';
 import useAuth from '../../hooks/useAuth';
 
+
 const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
+  const[toast,setToast] = useEffect(null)
   const [formData, setFormData] = useState({
     qualifications: '',
     experience: '',
     expectedSalary: ''
   });
+
+  const showToast=(message,type)=>{
+    setToast({message,type})
+  }
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -42,17 +48,21 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
       });
 
       if (response.ok) {
-        alert('Application submitted successfully!');
-        onSuccess();
-        onClose();
-      } else {
-        const errorData = await response.json();
-        alert(errorData.error || 'Failed to submit application');
+        showToast("Application submitted successfully!")
+       setTimeout(()=>{
+        onSuccess()
+        onClose()
+       },1500)
+      } 
+      else {
+        showToast(data.error);
       }
     } catch (error) {
       console.error('Error submitting application:', error);
-      alert('Error submitting application');
-    } finally {
+      showToast('Network error. Please check your connection and try again.', 'error');
+    
+    } 
+    finally {
       setLoading(false);
     }
   };
@@ -65,6 +75,11 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
   };
 
   return (
+    <>
+
+    {toast&&(
+      <Toast></Toast>
+    )}
     <div 
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto"
       onClick={onClose}
@@ -199,6 +214,7 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
         </form>
       </div>
     </div>
+    </>
   );
 };
 
