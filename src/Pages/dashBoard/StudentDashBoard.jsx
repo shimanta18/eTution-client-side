@@ -36,7 +36,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
     setLoading(true);
     try {
       
-      const response = await fetch(`${apiUrl}/tuitions/student/${user.uid}`)
+      const response = await fetch(`${apiUrl}/api/tuitions/student/${user.uid}`)
       
       if (response.ok) {
         const data = await response.json();
@@ -59,7 +59,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
   
     setLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/tuitions/student/${user.uid}`);
+      const response = await fetch(`${apiUrl}/api/tuitions/student/${user.uid}`);
 
       if (response.ok) {
         const data = await response.json();
@@ -93,7 +93,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
       console.log('Posting tuition:', tuitionData);
       
 
-      const response = await fetch(`${apiUrl}/tuitions`, {
+      const response = await fetch(`${apiUrl}/api/tuitions`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -148,7 +148,7 @@ const apiUrl = import.meta.env.VITE_API_URL;
     if (!confirm('Are you sure you want to delete this tuition?')) return;
 
     try {
-      const response = await fetch(`${apiUrl}/tuitions/${tuitionId}`, {
+      const response = await fetch(`${apiUrl}/api/tuitions/${tuitionId}`, {
         method: 'DELETE'
       });
 
