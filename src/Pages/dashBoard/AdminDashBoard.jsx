@@ -40,7 +40,7 @@ const [loading,setLoading] = useState(false)
   const fetchStats = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/stats`);
+      const response = await fetch(`${apiUrl}/api/stats`);
       if (response.ok) {
         const data = await response.json();
         setStats(data);
@@ -58,7 +58,7 @@ const [loading,setLoading] = useState(false)
   const fetchUsers = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/admin/users`);
+      const response = await fetch(`${apiUrl}/api/admin/users`);
       if (response.ok) {
         const data = await response.json();
         setUsers(data);
@@ -75,7 +75,7 @@ const [loading,setLoading] = useState(false)
   const fetchTuitions = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/admin/tuitions`);
+      const response = await fetch(`${apiUrl}/api/admin/tuitions`);
       if (response.ok) {
         const data = await response.json();
         setTuitions(data);
@@ -90,7 +90,7 @@ const [loading,setLoading] = useState(false)
     const fetchTransactions = async () => {
     setLoading(true);
     try {
-      const response = await fetch(`${apiUrl}/admin/transactions`);
+      const response = await fetch(`${apiUrl}/api/admin/transactions`);
       if (response.ok) {
         const data = await response.json();
         setTransactions(data);
@@ -110,7 +110,7 @@ const [loading,setLoading] = useState(false)
 
     try {
       const token = localStorage.getItem('access-token');
-      const response = await fetch(`${apiUrl}/admin/users/${uid}/role`, {
+      const response = await fetch(`${apiUrl}/api/admin/users/${uid}/role`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
@@ -135,7 +135,7 @@ const [loading,setLoading] = useState(false)
     if (!confirm('Are you sure you want to delete this user?')) return;
 
     try {
-      const response = await fetch(`${apiUrl}/admin/users/${uid}`, {
+      const response = await fetch(`${apiUrl}/api/admin/users/${uid}`, {
         method: 'DELETE'
       });
 
@@ -155,7 +155,7 @@ const [loading,setLoading] = useState(false)
     if (!confirm(`${status === 'APPROVED' ? 'Approve' : 'Reject'} this tuition?`)) return;
 
     try {
-      const response = await fetch(`${apiUrl}/admin/tuitions/${id}/status`, {
+      const response = await fetch(`${apiUrl}/api/admin/tuitions/${id}/status`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
