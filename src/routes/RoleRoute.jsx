@@ -23,7 +23,7 @@ export default function RoleRoute({ children, allowedRoles }) {
 
 
 
-          const response = await fetch(`${apiUrl}/users/${user.uid}`);
+          const response = await fetch(`${apiUrl}/api/users/${user.uid}`);
           
           if (response.ok) {
             const userData = await response.json();
