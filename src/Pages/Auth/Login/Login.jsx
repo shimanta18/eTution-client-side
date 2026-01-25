@@ -28,7 +28,7 @@ try{
 
   console.log("Login successful. UID:", user.uid)
 
-  const roleResponse = await fetch(`${apiUrl}/api/users/${user.uid}`)
+  const roleResponse = await fetch(`${apiUrl}/api/users/${user.uid}`);
 
   if(!roleResponse.ok){
     let errorText = await roleResponse.text();
@@ -49,10 +49,19 @@ try{
 
   console.log("User Role Fetched:", userRole);
 
-  const targetPath = userRole === "tutor"
-            ? "/dashboard/tutor"
-            : "/dashboard/student";
+  let targetPath
+  if(userRole==="admin"){
+    targetPath = '/dashboard/admin'
+  }
 
+  else if(userRole==="tutor"){
+    targetPath='/dashboard/tutor'
+  }
+
+  else{
+
+    targetPath="/dashboard/student"
+  }
     navigate(location?.state || targetPath);
 }
 
