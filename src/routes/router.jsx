@@ -17,8 +17,7 @@ import TuitionDetails from '../Pages/TuitionDetails/TuitionDetails'
 import Tuitions from '../Pages/Tutions/Tuitions'
 import TutorProfile from '../Pages/TutorProfile/TutorProfile'
 import Tutors from '../Pages/Tutors/Tutors'
-import PrivateRoute from './PrivateRoute'
-import RoleRoute from './RoleRoute'
+
 
 
 const DashboardRedirect = () => {
@@ -79,13 +78,13 @@ export const router = createBrowserRouter([
             },
             {
                 path:'dashboard',
-                element:<PrivateRoute><DashboardRedirect></DashboardRedirect></PrivateRoute>
+                element:<ProtectedRoute><DashboardRedirect></DashboardRedirect></ProtectedRoute>
             },
 
             {
                 path:'dashboard/admin',
                 element:(
-                    <PrivateRoute><RoleRoute allowedRoles={["admin"]}><AdminDashBoard></AdminDashBoard></RoleRoute></PrivateRoute>
+                    <ProtectedRoute allowedRoles={["admin"]}><AdminDashBoard></AdminDashBoard></ProtectedRoute>
                 )
             },
 
@@ -94,9 +93,9 @@ export const router = createBrowserRouter([
             {
                 path:'dashboard/tutor',
                 element:(
-                    <PrivateRoute>
-                        <RoleRoute allowedRoles={["tutor"]}><TutorDashboard></TutorDashboard></RoleRoute>
-                    </PrivateRoute>
+                    <ProtectedRoute
+                        allowedRoles={["tutor"]}><TutorDashboard></TutorDashboard>
+                    </ProtectedRoute>
                 )
             },
 
@@ -104,9 +103,9 @@ export const router = createBrowserRouter([
             {
                 path:'dashboard/student',
                 element:(
-                    <PrivateRoute>
-                        <RoleRoute allowedRoles={["student"]}><StudentDashboard></StudentDashboard></RoleRoute>
-                    </PrivateRoute>
+                    <ProtectedRoute
+                         allowedRoles={["student"]}><StudentDashboard></StudentDashboard>
+                    </ProtectedRoute>
                 )
             }
         ]
