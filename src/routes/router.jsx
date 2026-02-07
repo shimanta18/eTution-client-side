@@ -6,7 +6,7 @@ import Register from '../Pages/Auth/Register/Register'
 import StudentDashboard from '../Pages/dashBoard/StudentDashBoard'
 import TutorDashboard from '../Pages/dashBoard/TutorDashboard'
 import Home from '../Pages/Main Home/Home/Home'
-
+import ProtectedRoute from "./ProtectedRoute"
 
 import useAuth from '../hooks/useAuth'
 import About from '../Pages/About/About'
