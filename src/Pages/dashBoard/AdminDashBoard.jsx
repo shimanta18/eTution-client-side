@@ -118,7 +118,7 @@ const [loading,setLoading] = useState(false)
         },
         body: JSON.stringify({ role: newRole })
       });
-const data=await response.json
+const data=await response.json()
 
       if (response.ok) {
         alert('Role updated successfully!');
