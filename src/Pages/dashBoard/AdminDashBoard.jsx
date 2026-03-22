@@ -109,15 +109,16 @@ const [loading,setLoading] = useState(false)
     if (!confirm(`Change user role to ${newRole}?`)) return;
 
     try {
-      const token = localStorage.getItem('access-token');
+      
       const response = await fetch(`${apiUrl}/api/admin/users/${uid}/role`, {
         method: 'PATCH',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`
+          
         },
         body: JSON.stringify({ role: newRole })
       });
+const data=await response.json
 
       if (response.ok) {
         alert('Role updated successfully!');
