@@ -7,22 +7,20 @@ const apiUrl = import.meta.env.VITE_API_URL;
 const AdminDashBoard = () => {
     const {user,logOut} =useAuth()
     const navigate = useNavigate()
-const [activeTab,setActiveTab] = useState('Dashboard')
+const [activeTab,setActiveTab] = useState('User Management')
 const [loading,setLoading] = useState(false)
 
  const [stats, setStats] = useState(null);
   const [users, setUsers] = useState([]);
   const [tuitions, setTuitions] = useState([]);
   const [transactions, setTransactions] = useState([]);
-  const [editingUser, setEditingUser] = useState(null);
+  
 
-  const tabs=['Dashboard', 'User Management', 'Tuition Management', 'Reports & Analytics']
+  const tabs=[ 'User Management', 'Tuition Management', 'Reports & Analytics']
  
   useEffect(()=>{
-    if(activeTab==="Dashboard"){
-        fetchStats()
-    }
-    else if(activeTab ==="User Management"){
+   
+     if(activeTab ==="User Management"){
         fetchUsers()
     }
 
@@ -37,23 +35,7 @@ const [loading,setLoading] = useState(false)
   
   [activeTab])
 
-  const fetchStats = async () => {
-    setLoading(true);
-    try {
-      const response = await fetch(`${apiUrl}/api/stats`);
-      if (response.ok) {
-        const data = await response.json();
-        setStats(data);
-      }
-    }
-    catch (error) {
-      console.error('Error fetching stats:', error);
-    }
-    
-    finally {
-      setLoading(false);
-    }
-  }
+
 
   const fetchUsers = async () => {
     setLoading(true);
@@ -118,7 +100,7 @@ const [loading,setLoading] = useState(false)
         },
         body: JSON.stringify({ role: newRole })
       });
-const data=await response.json()
+
 
       if (response.ok) {
         alert('Role updated successfully!');
