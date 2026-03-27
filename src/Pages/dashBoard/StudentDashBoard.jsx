@@ -8,6 +8,8 @@ const StudentDashBoard = () => {
   const [activeTab, setActiveTab] = useState('My Tuitions');
   const [tuitions, setTuitions] = useState([]);
   const [loading, setLoading] = useState(false);
+const[payments,setPayments]=useState()
+
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -25,11 +27,42 @@ const apiUrl = import.meta.env.VITE_API_URL;
     if (activeTab === 'My Tuitions') {
       fetchMyTuitions();
     }
+
+    else if(activeTab==='Payments'){
+      fetchPayments()
+    }
   }, [activeTab, user]);
 
 
+//Add payment system
+
+const fetchPayments=async()=>{
+  if(!user?.uid) return
+
+  setLoading(true)
+
+  try{
+    const response = await fetch (`${apiUrl}/api/payments/student/${user.uid}`)
+
+    if(response.ok){
+      const data=await response.json()
+      setPayments(data)
+    }
 
 
+  } 
+
+  catch(error){
+    console.error("Error fetching payments",error)
+  }
+
+  finally{
+    setLoading(false)
+  }
+}
+
+
+//fetching tuitions
 
   const fetchMyTuitions = async () => {
     if (!user?.uid) return;
@@ -75,6 +108,8 @@ const apiUrl = import.meta.env.VITE_API_URL;
       setLoading(false);
     }
   };
+
+//handle tuition
 
   const handleTuitionPost = async (e) => {
     e.preventDefault();
@@ -143,6 +178,9 @@ const apiUrl = import.meta.env.VITE_API_URL;
       [e.target.name]: e.target.value
     });
   };
+
+
+  //handle delete tuition
 
   const handleDeleteTuition = async (tuitionId) => {
     if (!confirm('Are you sure you want to delete this tuition?')) return;
@@ -453,11 +491,95 @@ const apiUrl = import.meta.env.VITE_API_URL;
 
             {/* Payments Tab */}
             {activeTab === 'Payments' && (
-              <div className="text-center py-16">
-                
-                <p className="text-gray-500">No past payment history found.</p>
-              </div>
-            )}
+  <div>
+    <h2 className="text-2xl font-bold text-gray-900 mb-6">Payment History</h2>
+    
+    {loading ? (
+      <div className="flex justify-center py-12">
+        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    ) : payments.length > 0 ? (
+      <div className="bg-white border border-gray-200 rounded-lg overflow-hidden">
+        <div className="overflow-x-auto">
+          <table className="w-full">
+            <thead className="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Date
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Tutor
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Subject
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Method
+                </th>
+                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Status
+                </th>
+                <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">
+                  Amount
+                </th>
+              </tr>
+            </thead>
+            <tbody className="divide-y divide-gray-200">
+              {payments.map((payment) => (
+                <tr key={payment._id} className="hover:bg-gray-50">
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    {new Date(payment.paidAt).toLocaleDateString()}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                    {payment.tutorName || 'N/A'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    {payment.subject || 'General'}
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-600">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                      {payment.method || 'Cash'}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap">
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                      payment.status === 'COMPLETED' ? 'bg-green-100 text-green-800' :
+                      payment.status === 'PENDING' ? 'bg-yellow-100 text-yellow-800' :
+                      'bg-red-100 text-red-800'
+                    }`}>
+                      {payment.status}
+                    </span>
+                  </td>
+                  <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-semibold text-gray-900">
+                    ৳{payment.amount}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
+        
+        {/* Total Summary */}
+        <div className="bg-gray-50 px-6 py-4 border-t border-gray-200">
+          <div className="flex justify-between items-center">
+            <span className="text-sm font-medium text-gray-700">Total Paid:</span>
+            <span className="text-lg font-bold text-indigo-600">
+              ৳{payments.reduce((sum, p) => sum + (p.amount || 0), 0)}
+            </span>
+          </div>
+        </div>
+      </div>
+    ) : (
+      <div className="text-center py-16 bg-white border border-gray-200 rounded-lg">
+        <svg className="w-16 h-16 text-gray-300 mx-auto mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z" />
+        </svg>
+        <p className="text-gray-500 text-lg font-medium">No payment history found</p>
+        <p className="text-gray-400 text-sm mt-1">Your payments will appear here once you make them</p>
+      </div>
+    )}
+  </div>
+)}
 
             {/* Profile Tab */}
             {activeTab === 'Profile' && (
