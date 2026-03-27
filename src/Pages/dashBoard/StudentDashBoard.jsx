@@ -8,7 +8,7 @@ const StudentDashBoard = () => {
   const [activeTab, setActiveTab] = useState('My Tuitions');
   const [tuitions, setTuitions] = useState([]);
   const [loading, setLoading] = useState(false);
-const[payments,setPayments]=useState()
+const[payments,setPayments]=useState([])
 
 
 const apiUrl = import.meta.env.VITE_API_URL;
