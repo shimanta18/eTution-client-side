@@ -6,7 +6,7 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
   const { user } = useAuth();
   const [loading, setLoading] = useState(false);
-  const[toast,setToast] = useEffect(null)
+  const[toast,setToast] = useState(null)
   const [formData, setFormData] = useState({
     qualifications: '',
     experience: '',
@@ -16,7 +16,7 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
   const showToast=(message,type)=>{
     setToast({message,type})
   }
-
+  
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
@@ -55,7 +55,8 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
        },1500)
       } 
       else {
-        showToast(data.error);
+        const data=await response.json()
+        showToast(data.error||'Failed to submit application', 'error')
       }
     } catch (error) {
       console.error('Error submitting application:', error);
@@ -77,9 +78,13 @@ const ApplicationModal = ({ tuition, onClose, onSuccess }) => {
   return (
     <>
 
-    {toast&&(
-      <Toast></Toast>
-    )}
+    {toast && (
+  <div className={`fixed top-4 right-4 z-50 px-4 py-3 rounded-lg shadow-lg text-white text-sm font-medium ${
+    toast.type === 'error' ? 'bg-red-500' : 'bg-green-500'
+  }`}>
+    {toast.message}
+  </div>
+)}
     <div 
       className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-4 overflow-y-auto"
       onClick={onClose}
