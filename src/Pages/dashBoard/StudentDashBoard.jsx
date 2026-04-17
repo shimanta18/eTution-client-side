@@ -9,7 +9,7 @@ const StudentDashBoard = () => {
   const [tuitions, setTuitions] = useState([]);
   const [loading, setLoading] = useState(false);
 const[payments,setPayments]=useState([])
-
+const [applications,setApplications]=useState([])
 
 const apiUrl = import.meta.env.VITE_API_URL;
 
@@ -31,7 +31,30 @@ const apiUrl = import.meta.env.VITE_API_URL;
     else if(activeTab==='Payments'){
       fetchPayments()
     }
+
+    else if(activeTab==='Applications'){
+      fetchApplications()
+    }
   }, [activeTab, user]);
+
+
+  //add this fetch function
+
+  const fetchApplications=async()=>{
+   if (!user?.uid) return;
+  setLoading(true);
+  try {
+    const response = await fetch(`${apiUrl}/api/applications/student/${user.uid}`);
+    if (response.ok) {
+      const data = await response.json();
+      setApplications(data);
+    }
+  } catch (error) {
+    console.error('Error fetching applications:', error);
+  } finally {
+    setLoading(false);
+  }
+};
 
 
 //Add payment system
@@ -42,7 +65,15 @@ const fetchPayments=async()=>{
   setLoading(true)
 
   try{
-    const response = await fetch (`${apiUrl}/api/payments/student/${user.uid}`)
+
+    const controller= new AbortController()
+    const timeout= setTimeout(()=>controller.abort(),5000)
+
+    const response = await fetch (`${apiUrl}/api/payments/student/${user.uid}`,{
+signal:controller.signal
+    })
+
+clearTimeout(timeout)
 
     if(response.ok){
       const data=await response.json()
@@ -53,7 +84,13 @@ const fetchPayments=async()=>{
   } 
 
   catch(error){
-    console.error("Error fetching payments",error)
+    if(error.name==='AbortError'){
+      console.error("Request timed out")
+    }
+
+    else{
+      console.error("Error fetching payments",error)
+    }
   }
 
   finally{
@@ -216,6 +253,29 @@ const fetchPayments=async()=>{
       console.error("Logout error:", error);
     }
   };
+
+
+  //handle application
+
+  const handleApplicationStatus = async (applicationId, status) => {
+  if (!confirm(`${status === 'ACCEPTED' ? 'Accept' : 'Reject'} this tutor?`)) return;
+  try {
+    const response = await fetch(`${apiUrl}/api/applications/${applicationId}/status`, {
+      method: 'PATCH',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ status })
+    });
+    if (response.ok) {
+      alert(`Application ${status.toLowerCase()} successfully!`);
+      fetchApplications();
+    } else {
+      alert('Failed to update application');
+    }
+  } catch (error) {
+    console.error('Error updating application:', error);
+  }
+};
+
 
   return (
     <div className="flex min-h-screen bg-gray-50">
@@ -483,11 +543,85 @@ const fetchPayments=async()=>{
 
             {/* Applications Tab */}
             {activeTab === 'Applications' && (
-              <div className="text-center py-16">
-                
-                <p className="text-gray-500">No applications yet.</p>
+  <div className="space-y-4">
+    {loading ? (
+      <div className="flex justify-center py-12">
+        <div className="w-8 h-8 border-4 border-indigo-600 border-t-transparent rounded-full animate-spin"></div>
+      </div>
+    ) : applications.length > 0 ? (
+      applications.map((app) => (
+        <div key={app._id} className="bg-white border border-gray-200 rounded-lg p-5">
+          <div className="flex items-start justify-between">
+            <div className="flex items-center gap-4 flex-1">
+              {/* Avatar */}
+              <div className="w-12 h-12 bg-indigo-100 rounded-full flex items-center justify-center flex-shrink-0">
+                <span className="text-indigo-600 font-semibold text-lg">
+                  {app.tutorName?.charAt(0) || 'T'}
+                </span>
+              </div>
+
+              <div className="flex-1">
+                <div className="flex items-center gap-3 mb-1">
+                  <h3 className="text-base font-semibold text-gray-900">
+                    {app.tutorName}
+                  </h3>
+                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
+                    app.status === 'ACCEPTED' ? 'bg-green-100 text-green-800' :
+                    app.status === 'REJECTED' ? 'bg-red-100 text-red-800' :
+                    'bg-orange-100 text-orange-800'
+                  }`}>
+                    {app.status}
+                  </span>
+                </div>
+                <p className="text-xs text-gray-500 mb-2">{app.tutorEmail}</p>
+                <div className="space-y-1">
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">For:</span>{' '}
+                    {app.tuitionDetails?.subject} - {app.tuitionDetails?.classGrade}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Qualifications:</span> {app.qualifications}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Experience:</span> {app.experience}
+                  </p>
+                  <p className="text-sm font-semibold text-indigo-600">
+                    Expected: ৳{app.expectedSalary}/month
+                  </p>
+                </div>
+              </div>
+            </div>
+
+            {/* Accept / Reject buttons — only show if PENDING */}
+            {app.status === 'PENDING' && (
+              <div className="flex gap-2 ml-4 flex-shrink-0">
+                <button
+                  onClick={() => handleApplicationStatus(app._id, 'ACCEPTED')}
+                  className="px-4 py-2 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700 transition"
+                >
+                  Accept
+                </button>
+                <button
+                  onClick={() => handleApplicationStatus(app._id, 'REJECTED')}
+                  className="px-4 py-2 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700 transition"
+                >
+                  Reject
+                </button>
               </div>
             )}
+          </div>
+        </div>
+      ))
+    ) : (
+      <div className="text-center py-16 bg-white border border-gray-200 rounded-lg">
+        <p className="text-gray-500 text-lg font-medium">No applications yet</p>
+        <p className="text-gray-400 text-sm mt-1">
+          Tutors will apply to your posted tuitions and appear here
+        </p>
+      </div>
+    )}
+  </div>
+)}
 
             {/* Payments Tab */}
             {activeTab === 'Payments' && (
