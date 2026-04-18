@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
-
 const apiUrl = import.meta.env.VITE_API_URL;
 
 const AdminDashBoard = () => {

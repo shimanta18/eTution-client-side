@@ -17,7 +17,30 @@ const apiUrl = import.meta.env.VITE_API_URL
   const [loading, setLoading] = useState(false);
 
   const tabs = ['Available Tuitions', 'My Applications', 'My Students', 'Earnings', 'Profile'];
-
+const confirmToast = (message, onConfirm) => {
+  toast((t) => (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm font-medium text-gray-800">{message}</p>
+      <div className="flex gap-2">
+        <button
+          onClick={() => {
+            toast.dismiss(t.id);
+            onConfirm();
+          }}
+          className="px-4 py-1.5 bg-green-600 text-white text-sm font-medium rounded-lg hover:bg-green-700"
+        >
+          Confirm
+        </button>
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="px-4 py-1.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  ), { duration: Infinity });
+};
   const [profileData, setProfileData] = useState({
   subject: '',
   experience: '',
@@ -194,9 +217,8 @@ const handleUpdateProfile = async (e) => {
     }
   };
 
-  const handleApplyToTuition = async (tuitionId) => {
-    if (!user) return;
-
+  const handleApplyToTuition = (tuitionId) => {
+  confirmToast('Apply for this tuition?', async () => {
     try {
       const applicationData = {
         tuitionId,
@@ -209,29 +231,21 @@ const handleUpdateProfile = async (e) => {
 
       const response = await fetch(`${apiUrl}/api/applications`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(applicationData)
       });
 
       if (response.ok) {
         toast.success('Application submitted successfully!');
         fetchAvailableTuitions();
-      }
-      
-      else {
+      } else {
         toast.error('Failed to submit application');
       }
-    }
-    
-    
-    catch (error) {
-      console.error('Error applying to tuition:', error);
+    } catch (error) {
       toast.error('Error submitting application');
     }
-  };
-
+  });
+};
   const handleLogout = async () => {
     try {
       await logOut();
