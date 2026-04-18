@@ -68,37 +68,57 @@ const AuthProvider = ({ children }) => {
   }
 };
 
-  const signInUser = (email, password) => {
-    setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
-  };
-
-  const updateUserProfile = (profile) => {
-    return updateProfile(auth.currentUser, profile);
-  };
+ const signInUser = async (email, password) => {
+  setLoading(true);
+  try {
+    const result = await signInWithEmailAndPassword(auth, email, password);
+    
+   
+    const res = await fetch(`${apiUrl}/api/users/${result.user.uid}`);
+    if (res.ok) {
+      const dbUser = await res.json();
+      setUser({ ...result.user, role: dbUser.role });
+    } else {
+      setUser({ ...result.user, role: 'student' });
+    }
+    
+    return result;
+  } catch (error) {
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
 
   const signInGoogle = async () => {
-    setLoading(true);
-    try {
-      const result = await signInWithPopup(auth, googleProvider);
-      
+  setLoading(true);
+  try {
+    const result = await signInWithPopup(auth, googleProvider);
+
+    await saveUserToDatabase({
+      uid: result.user.uid,
+      email: result.user.email,
+      displayName: result.user.displayName,
+      photoURL: result.user.photoURL,
+      role: 'student'
+    });
+
     
-      await saveUserToDatabase({
-        uid: result.user.uid,
-        email: result.user.email,
-        displayName: result.user.displayName,
-        photoURL: result.user.photoURL,
-        role: 'student' 
-      });
-      
-      return result;
-    } catch (error) {
-      console.error("Google sign-in error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
+    const res = await fetch(`${apiUrl}/api/users/${result.user.uid}`);
+    if (res.ok) {
+      const dbUser = await res.json();
+      setUser({ ...result.user, role: dbUser.role });
+    } else {
+      setUser({ ...result.user, role: 'student' });
     }
-  };
+
+    return result;
+  } catch (error) {
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
 
   const logOut = () => {
     setLoading(true);
