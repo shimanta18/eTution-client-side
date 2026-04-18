@@ -29,6 +29,32 @@ const showAlert = (msg, type) => {
 
   const tabs = ['My Tuitions', 'Post Tuition', 'Applications', 'Payments', 'Profile'];
 
+// Add this helper function in your StudentDashboard
+const confirmToast = (message, onConfirm) => {
+  toast((t) => (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm font-medium text-gray-800">{message}</p>
+      <div className="flex gap-2">
+        <button
+          onClick={() => {
+            toast.dismiss(t.id);
+            onConfirm();
+          }}
+          className="px-4 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700"
+        >
+          Confirm
+        </button>
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="px-4 py-1.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  ), { duration: Infinity }); // stays until user clicks
+};
+
   useEffect(() => {
     if (activeTab === 'My Tuitions') {
       fetchMyTuitions();
@@ -227,30 +253,23 @@ clearTimeout(timeout)
 
   //handle delete tuition
 
-  const handleDeleteTuition = async (tuitionId) => {
-    if (!confirm('Are you sure you want to delete this tuition?')) return;
-
+ const handleDeleteTuition = (tuitionId) => {
+  confirmToast('Are you sure you want to delete this tuition?', async () => {
     try {
       const response = await fetch(`${apiUrl}/api/tuitions/${tuitionId}`, {
         method: 'DELETE'
       });
-
       if (response.ok) {
         toast.success('Tuition deleted successfully');
         fetchMyTuitions();
-      } 
-      
-      else {
-       toast.error('Failed to delete tuition');
+      } else {
+        toast.error('Failed to delete tuition');
       }
-    }
-    
-    catch (error) {
-      console.error('Error deleting tuition:', error);
+    } catch (error) {
       toast.error('Error deleting tuition');
     }
-  };
-
+  });
+};
   const handleLogout = async () => {
     try {
       await logOut();
