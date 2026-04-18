@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import toast from 'react-hot-toast';
 import { useNavigate } from 'react-router';
 import useAuth from '../../hooks/useAuth';
 const apiUrl = import.meta.env.VITE_API_URL;
@@ -14,6 +15,30 @@ const [loading,setLoading] = useState(false)
   const [tuitions, setTuitions] = useState([]);
   const [transactions, setTransactions] = useState([]);
   
+const confirmToast = (message, onConfirm) => {
+  toast((t) => (
+    <div className="flex flex-col gap-3">
+      <p className="text-sm font-medium text-gray-800">{message}</p>
+      <div className="flex gap-2">
+        <button
+          onClick={() => {
+            toast.dismiss(t.id);
+            onConfirm();
+          }}
+          className="px-4 py-1.5 bg-red-600 text-white text-sm font-medium rounded-lg hover:bg-red-700"
+        >
+          Confirm
+        </button>
+        <button
+          onClick={() => toast.dismiss(t.id)}
+          className="px-4 py-1.5 bg-gray-200 text-gray-700 text-sm font-medium rounded-lg hover:bg-gray-300"
+        >
+          Cancel
+        </button>
+      </div>
+    </div>
+  ), { duration: Infinity }); // stays until user clicks
+};
 
   const tabs=[ 'User Management', 'Tuition Management', 'Reports & Analytics']
  
@@ -86,76 +111,67 @@ const [loading,setLoading] = useState(false)
 
 
  
-  const handleUpdateRole = async (uid, newRole) => {
-    if (!confirm(`Change user role to ${newRole}?`)) return;
-
+  const handleUpdateRole = (uid, newRole) => {
+  confirmToast(`Change user role to ${newRole}?`, async () => {
     try {
-      
       const response = await fetch(`${apiUrl}/api/admin/users/${uid}/role`, {
         method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-          
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ role: newRole })
       });
-
-
       if (response.ok) {
-        alert('Role updated successfully!');
+        toast.success('Role updated successfully!');
         fetchUsers();
       } else {
-        alert('Failed to update role');
+        toast.error('Failed to update role');
       }
     } catch (error) {
-      console.error('Error updating role:', error);
-      alert('Error updating role');
+      toast.error('Error updating role');
     }
-  };
+  });
+};
 
-  const handleDeleteUser = async (uid) => {
-    if (!confirm('Are you sure you want to delete this user?')) return;
 
+  const handleDeleteUser = (uid) => {
+  confirmToast('Are you sure you want to delete this user?', async () => {
     try {
       const response = await fetch(`${apiUrl}/api/admin/users/${uid}`, {
         method: 'DELETE'
       });
-
       if (response.ok) {
-        alert('User deleted successfully!');
+        toast.success('User deleted successfully!');
         fetchUsers();
       } else {
-        alert('Failed to delete user');
+        toast.error('Failed to delete user');
       }
     } catch (error) {
-      console.error('Error deleting user:', error);
-      alert('Error deleting user');
+      toast.error('Error deleting user');
     }
-  };
+  });
+};
 
-  const handleUpdateTuitionStatus = async (id, status) => {
-    if (!confirm(`${status === 'APPROVED' ? 'Approve' : 'Reject'} this tuition?`)) return;
-
-    try {
-      const response = await fetch(`${apiUrl}/api/admin/tuitions/${id}/status`, {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ status })
-      });
-
-      if (response.ok) {
-        alert(`Tuition ${status.toLowerCase()} successfully!`);
-        fetchTuitions();
-      } else {
-        alert('Failed to update tuition status');
+ const handleUpdateTuitionStatus = (id, status) => {
+  confirmToast(
+    `${status === 'APPROVED' ? 'Approve' : 'Reject'} this tuition?`,
+    async () => {
+      try {
+        const response = await fetch(`${apiUrl}/api/admin/tuitions/${id}/status`, {
+          method: 'PATCH',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ status })
+        });
+        if (response.ok) {
+          toast.success(`Tuition ${status.toLowerCase()} successfully!`);
+          fetchTuitions();
+        } else {
+          toast.error('Failed to update tuition status');
+        }
+      } catch (error) {
+        toast.error('Error updating tuition');
       }
-    } catch (error) {
-      console.error('Error updating tuition:', error);
-      alert('Error updating tuition');
     }
-  };
+  );
+};
 
   const handleLogout = async () => {
     try {
