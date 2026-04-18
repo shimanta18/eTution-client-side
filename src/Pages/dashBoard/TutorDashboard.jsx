@@ -216,19 +216,19 @@ const handleUpdateProfile = async (e) => {
       });
 
       if (response.ok) {
-        alert('Application submitted successfully!');
+        toast.success('Application submitted successfully!');
         fetchAvailableTuitions();
       }
       
       else {
-        alert('Failed to submit application');
+        toast.error('Failed to submit application');
       }
     }
     
     
     catch (error) {
       console.error('Error applying to tuition:', error);
-      alert('Error submitting application');
+      toast.error('Error submitting application');
     }
   };
 

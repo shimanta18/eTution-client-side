@@ -35,33 +35,38 @@ const AuthProvider = ({ children }) => {
     }
   };
 
-  const registerUser = async (email, password, additionalData = {}) => {
-    setLoading(true);
-    try {
-      const result = await createUserWithEmailAndPassword(auth, email, password);
-      
-     
-      if (additionalData.name) {
-        await updateProfile(result.user, { displayName: additionalData.name });
-      }
-      
-    
-      await saveUserToDatabase({
-        uid: result.user.uid,
-        email: result.user.email,
-        displayName: additionalData.name || email.split('@')[0],
-        photoURL: result.user.photoURL,
-        role: additionalData.role || 'student'
-      });
-      
-      return result;
-    } catch (error) {
-      console.error("Registration error:", error);
-      throw error;
-    } finally {
-      setLoading(false);
+ const registerUser = async (email, password, additionalData = {}) => {
+  setLoading(true);
+  try {
+    const result = await createUserWithEmailAndPassword(auth, email, password);
+
+    if (additionalData.name) {
+      await updateProfile(result.user, { displayName: additionalData.name });
     }
-  };
+
+    await saveUserToDatabase({
+      uid: result.user.uid,
+      email: result.user.email,
+      displayName: additionalData.name || email.split('@')[0],
+      photoURL: result.user.photoURL,
+      role: additionalData.role || 'student'
+    });
+
+    
+    setUser({ 
+      ...result.user, 
+      displayName: additionalData.name || result.user.displayName,
+      role: additionalData.role || 'student' 
+    });
+
+    return result;
+  } catch (error) {
+    console.error('Registration error:', error);
+    throw error;
+  } finally {
+    setLoading(false);
+  }
+};
 
   const signInUser = (email, password) => {
     setLoading(true);
