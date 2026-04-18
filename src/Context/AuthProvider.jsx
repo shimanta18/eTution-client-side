@@ -13,6 +13,10 @@ const AuthProvider = ({ children }) => {
   const apiUrl = import.meta.env.VITE_API_URL;
 
   
+const updateUserProfile = (profile) => {
+  return updateProfile(auth.currentUser, profile);
+};
+
   const saveUserToDatabase = async (userData) => {
     try {
       const response = await fetch(`${apiUrl}/api/users/save`, {
