@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
+import toast from 'react-hot-toast';
 import { useNavigate } from "react-router-dom";
 import useAuth from "../../hooks/useAuth";
+
 
 const StudentDashBoard = () => {
   const { user, logOut } = useAuth();
@@ -10,9 +12,13 @@ const StudentDashBoard = () => {
   const [loading, setLoading] = useState(false);
 const[payments,setPayments]=useState([])
 const [applications,setApplications]=useState([])
+const [notification, setNotification] = useState({ show: false, message: '', type: '' });
 
 const apiUrl = import.meta.env.VITE_API_URL;
-
+const showAlert = (msg, type) => {
+  setNotification({ show: true, message: msg, type: type });
+  setTimeout(() => setNotification({ show: false, message: '', type: '' }), 3000);
+};
   const [formData, setFormData] = useState({
     subject: '',
     classGrade: '',
@@ -50,7 +56,8 @@ const apiUrl = import.meta.env.VITE_API_URL;
       setApplications(data);
     }
   } catch (error) {
-    console.error('Error fetching applications:', error);
+    console.error( error);
+    toast.error('Failed to load applications')
   } finally {
     setLoading(false);
   }
@@ -120,7 +127,8 @@ clearTimeout(timeout)
     } 
     
     catch (error) {
-      console.error('Network Error:', error);
+      showAlert( error);
+      alert('Network Error:')
     } 
     
     finally {
@@ -178,7 +186,7 @@ clearTimeout(timeout)
       });
 
       if (response.ok) {
-        alert('Tuition posted successfully!');
+        toast.success('Tuition posted successfully!');
         setFormData({
           subject: '',
           classGrade: '',
@@ -193,13 +201,13 @@ clearTimeout(timeout)
       } 
       
       else {
-        const error = await response.json();
-        alert('Failed to post tuition');
+        const errorData = await response.json();
+        toast.error( errorData.message||'Failed to post tuition');
       }
     } 
     
     catch (error) {
-      console.error('Error posting tuition:', error);
+      showAlert('Error posting tuition:', error);
       alert('Error posting tuition');
     }
     
@@ -228,18 +236,18 @@ clearTimeout(timeout)
       });
 
       if (response.ok) {
-        alert('Tuition deleted successfully!');
+        toast.success('Tuition deleted successfully');
         fetchMyTuitions();
       } 
       
       else {
-        alert('Failed to delete tuition');
+       toast.error('Failed to delete tuition');
       }
     }
     
     catch (error) {
       console.error('Error deleting tuition:', error);
-      alert('Error deleting tuition');
+      toast.error('Error deleting tuition');
     }
   };
 
@@ -266,13 +274,13 @@ clearTimeout(timeout)
       body: JSON.stringify({ status })
     });
     if (response.ok) {
-      alert(`Application ${status.toLowerCase()} successfully!`);
+      toast.success(`Application ${status.toLowerCase()} successfully!`)
       fetchApplications();
     } else {
-      alert('Failed to update application');
+      toast.error('Failed to update application');
     }
   } catch (error) {
-    console.error('Error updating application:', error);
+    toast.error('An error occurred while updating status');
   }
 };
 
@@ -286,6 +294,17 @@ clearTimeout(timeout)
          
           <span className="text-lg font-bold  text-gray-900">eTuitionBd</span>
         </div>
+
+        {notification.show && (
+  <div className={`fixed top-5 right-5 z-50 px-6 py-3 rounded-lg shadow-lg text-white transition-all transform ${
+    notification.type === 'success' ? 'bg-green-500' : 'bg-red-500'
+  }`}>
+    <div className="flex items-center gap-2">
+      
+      <span>{notification.message}</span>
+    </div>
+  </div>
+)}
 
         {/* Profile Section */}
         <div className="px-6 py-6 border-b border-gray-200">
