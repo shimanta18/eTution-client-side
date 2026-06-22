@@ -2,7 +2,7 @@
 
 A comprehensive, role-based e-learning and tutor-matching platform designed to bridge the gap between students, guardians, and professional tutors. eTution features a highly interactive full-stack workflow with distinct user dashboards and real-time management panels.
 
- **[Live Deployment Link](https://etution.netlify.app)** 
+
 
 ---
 
@@ -50,3 +50,5 @@ Follow these steps to configure and run the client application locally:
 ```bash
 git clone [https://github.com/Shimanta18/eTution-client-side.git](https://github.com/Shimanta18/eTution-client-side.git)
 cd eTution-client-side
+```
+ **[Live Deployment Link](https://etuition.netlify.app/)** 
